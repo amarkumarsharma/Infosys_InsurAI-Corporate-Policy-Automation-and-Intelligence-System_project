@@ -241,7 +241,7 @@ const Chatbot = ({ employeeData = { name: 'Employee', claims: [], policies: [] }
             ))}
             {loading && (
               <div style={styles.loading}>
-                🎨 InsurAI is thinking...
+                🎨 InsurAI is thinking.....
               </div>
             )}
           </div>

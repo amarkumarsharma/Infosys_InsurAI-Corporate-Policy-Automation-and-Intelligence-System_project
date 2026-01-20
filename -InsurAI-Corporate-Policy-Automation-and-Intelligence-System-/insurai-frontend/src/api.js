@@ -1,9 +1,9 @@
 import axios from "axios";
 
-// API Configuration
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://ingenious-surprise-production.up.railway.app";
+// ✅ HARDCODED Production URL - Environment variable issue fix
+const BASE_URL = "https://ingenious-surprise-production.up.railway.app";
 
-console.log("🚀 API Base URL:", BASE_URL); // Debug line
+console.log("🚀 API Base URL:", BASE_URL);
 
 const API = axios.create({
   baseURL: BASE_URL,

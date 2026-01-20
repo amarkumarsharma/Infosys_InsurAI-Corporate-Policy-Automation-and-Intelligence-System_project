@@ -44,7 +44,7 @@ export default function EmployeeLogin() {
     }
 
     try {
-      const res = await axios.post("http://localhost:8080/auth/login", {
+      const res = await axios.post("http://https://ingenious-surprise-production.up.railway.app/auth/login", {
         email: email.trim().toLowerCase(),
         password,
       });
@@ -332,7 +332,7 @@ export default function EmployeeLogin() {
 //     }
 
 //     try {
-//       const res = await axios.post("http://localhost:8080/auth/login", {
+//       const res = await axios.post("http://https://ingenious-surprise-production.up.railway.app/auth/login", {
 //         email: email.trim().toLowerCase(),
 //         password,
 //       });

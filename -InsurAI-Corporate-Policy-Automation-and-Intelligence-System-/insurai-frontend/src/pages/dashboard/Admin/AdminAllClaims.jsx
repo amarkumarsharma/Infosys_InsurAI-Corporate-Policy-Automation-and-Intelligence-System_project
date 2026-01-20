@@ -1483,7 +1483,7 @@ const AdminAllClaims = ({ claims = [] }) => {
                       {viewClaim.documents.map((doc, idx) => (
                         <a
                           key={idx}
-                          href={`http://localhost:8080${doc}`}
+                          href={`http://https://ingenious-surprise-production.up.railway.app${doc}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           style={{

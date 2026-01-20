@@ -63,7 +63,7 @@ const Chatbot = ({ employeeData = { name: 'Employee', claims: [], policies: [] }
 
     try {
       const response = await axios.post(
-        'http://localhost:8080/employee/chatbot',
+        'http://https://ingenious-surprise-production.up.railway.app/employee/chatbot',
         { message: userMessage.text },
         { headers: { Authorization: `Bearer ${token}` } }
       );

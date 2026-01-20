@@ -29,8 +29,8 @@ export default function EmployeeNotification({ userDbId, token }) {
       try {
         const url =
           filter === "unread"
-            ? `http://localhost:8080/notifications/user/${Number(userDbId)}/unread`
-            : `http://localhost:8080/notifications/user/${Number(userDbId)}`;
+            ? `http://https://ingenious-surprise-production.up.railway.app/notifications/user/${Number(userDbId)}/unread`
+            : `http://https://ingenious-surprise-production.up.railway.app/notifications/user/${Number(userDbId)}`;
 
         const response = await axios.get(url, {
           params: { role: "EMPLOYEE" },
@@ -61,7 +61,7 @@ export default function EmployeeNotification({ userDbId, token }) {
   const markAsRead = async (notificationId) => {
     try {
       const response = await axios.put(
-        `http://localhost:8080/notifications/${Number(notificationId)}/read`,
+        `http://https://ingenious-surprise-production.up.railway.app/notifications/${Number(notificationId)}/read`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -106,7 +106,7 @@ export default function EmployeeNotification({ userDbId, token }) {
       await Promise.all(
         Array.from(selectedNotifications).map((id) =>
           axios.put(
-            `http://localhost:8080/notifications/${Number(id)}/read`,
+            `http://https://ingenious-surprise-production.up.railway.app/notifications/${Number(id)}/read`,
             {},
             { headers: { Authorization: `Bearer ${token}` } }
           )

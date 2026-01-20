@@ -90,7 +90,7 @@ const handlePhoneChange = (e) => {
       }
 
       const response = await axios.post(
-        "http://localhost:8080/admin/hr/register",
+        "http://https://ingenious-surprise-production.up.railway.app/admin/hr/register",
         newHr,
         {
           headers: { 

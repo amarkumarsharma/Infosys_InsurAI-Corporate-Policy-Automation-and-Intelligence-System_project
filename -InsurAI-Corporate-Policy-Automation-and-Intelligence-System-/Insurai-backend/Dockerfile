@@ -26,16 +26,4 @@ EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "-Dserver.port=${PORT:-8080}", "app.jar"]
 ```
 
-## 2. .dockerignore
-```
-target/
-!target/*.jar
-.mvn/
-mvnw
-mvnw.cmd
-*.log
-.env
-.git
-.gitignore
-.DS_Store
-*.md
+

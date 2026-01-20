@@ -31,53 +31,63 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .cors(cors -> {}) // Keep global CORS
             .authorizeHttpRequests(auth -> auth
-                // Employee claim endpoints
-                .requestMatchers("/employee/claims/**").hasRole("EMPLOYEE")
-                .requestMatchers("/employee/queries/**").hasRole("EMPLOYEE")
-                .requestMatchers("/uploads/**").permitAll()
-                .requestMatchers("/hr/claims").hasAnyRole("HR")
-                .requestMatchers("/admin/claims").hasAnyRole("ADMIN")
-                .requestMatchers("/hr/claims/fraud").hasRole("HR")
-                .requestMatchers("/admin/claims/fraud").hasRole("ADMIN")
-                // Notifications endpoints
-                .requestMatchers("/notifications/user/**").hasAnyAuthority("ROLE_EMPLOYEE", "ROLE_HR", "ROLE_ADMIN")
-                .requestMatchers("/notifications/**").hasAnyRole("HR", "ADMIN")
-                .requestMatchers("/notifications/*/read").hasAnyAuthority("ROLE_EMPLOYEE", "ROLE_HR", "ROLE_ADMIN")
-
-                .requestMatchers("/employee/chatbot").hasRole("EMPLOYEE")
-
-                // Public endpoints
+                // ✅✅✅ MOST IMPORTANT: Public endpoints FIRST ✅✅✅
+                .requestMatchers("/", "/health", "/actuator/**", "/error").permitAll()
+                
+                // Public authentication endpoints
                 .requestMatchers(
                     "/auth/**",
                     "/auth/forgot-password",
                     "/auth/reset-password/**", 
-                    "/admin/**",
-                    "/admin/policies",
-                    "/admin/policies/save",
-                    "/agent/**",
                     "/employee/login",
                     "/agent/login",
                     "/employee/register",
-                    "/employee/policies",
-                    "/hr/login",
-                    "/agent/availability/**",
-                    "/agent/queries/pending/**",
-                    "/employees/**",
-                    "/hr/**"
+                    "/hr/login"
                 ).permitAll()
-
-                // Agent endpoints
-                .requestMatchers("/agent/queries/respond/**", "/agent/queries/all/**").hasRole("AGENT")
-
-                // Employee endpoints (other than claims/queries)
+                
+                // Public resources
+                .requestMatchers("/uploads/**").permitAll()
+                .requestMatchers("/employee/policies").permitAll()
+                
+                // Public admin endpoints (you can secure later)
+                .requestMatchers("/admin/**").permitAll()
+                .requestMatchers("/admin/policies").permitAll()
+                .requestMatchers("/admin/policies/save").permitAll()
+                
+                // Public agent endpoints
+                .requestMatchers("/agent/availability/**").permitAll()
+                .requestMatchers("/agent/queries/pending/**").permitAll()
+                
+                // Temporarily public (you can secure later)
+                .requestMatchers("/employees/**").permitAll()
+                .requestMatchers("/hr/**").permitAll()
+                
+                // 🔒 Secured Employee endpoints
+                .requestMatchers("/employee/claims/**").hasRole("EMPLOYEE")
+                .requestMatchers("/employee/queries/**").hasRole("EMPLOYEE")
+                .requestMatchers("/employee/chatbot").hasRole("EMPLOYEE")
                 .requestMatchers("/employee/**").hasRole("EMPLOYEE")
-
-                // Claim endpoints for HR/Admin
+                
+                // 🔒 Secured Agent endpoints
+                .requestMatchers("/agent/queries/respond/**").hasRole("AGENT")
+                .requestMatchers("/agent/queries/all/**").hasRole("AGENT")
+                .requestMatchers("/agent/**").hasRole("AGENT")
+                
+                // 🔒 Secured HR/Admin claim endpoints
+                .requestMatchers("/hr/claims").hasAnyRole("HR", "ADMIN")
+                .requestMatchers("/admin/claims").hasAnyRole("HR", "ADMIN")
+                .requestMatchers("/hr/claims/fraud").hasRole("HR")
+                .requestMatchers("/admin/claims/fraud").hasRole("ADMIN")
                 .requestMatchers(
                     "/claims/approve/**",
                     "/claims/reject/**",
                     "/claims/all"
                 ).hasAnyRole("HR", "ADMIN")
+                
+                // 🔒 Notifications endpoints
+                .requestMatchers("/notifications/user/**").hasAnyAuthority("ROLE_EMPLOYEE", "ROLE_HR", "ROLE_ADMIN")
+                .requestMatchers("/notifications/**").hasAnyRole("HR", "ADMIN")
+                .requestMatchers("/notifications/*/read").hasAnyAuthority("ROLE_EMPLOYEE", "ROLE_HR", "ROLE_ADMIN")
 
                 // Everything else requires authentication
                 .anyRequest().authenticated()
@@ -98,10 +108,6 @@ public class SecurityConfig {
         return authConfig.getAuthenticationManager();
     }
 
-    /**
-     * Password Encoder Bean - Required for password hashing
-     * Uses BCrypt algorithm for secure password storage
-     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

@@ -44,7 +44,7 @@ export default function AgentLogin() {
     }
 
     try {
-      const response = await fetch("http://https://ingenious-surprise-production.up.railway.app/agent/login", {
+      const response = await fetch("https://ingenious-surprise-production.up.railway.app/agent/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

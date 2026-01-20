@@ -28,7 +28,7 @@ export default function HRNotification({ currentHrId }) {
         }
 
         const response = await axios.get(
-          `http://https://ingenious-surprise-production.up.railway.app/notifications/user/${currentHrId}`,
+          `https://ingenious-surprise-production.up.railway.app/notifications/user/${currentHrId}`,
           {
             params: { role: "HR" },
             headers: { Authorization: `Bearer ${token}` },
@@ -59,7 +59,7 @@ export default function HRNotification({ currentHrId }) {
       }
 
       const response = await axios.put(
-        `http://https://ingenious-surprise-production.up.railway.app/notifications/${id}/read`,
+        `https://ingenious-surprise-production.up.railway.app/notifications/${id}/read`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -82,7 +82,7 @@ export default function HRNotification({ currentHrId }) {
       const token = localStorage.getItem("token");
       const promises = Array.from(selectedNotifications).map(id =>
         axios.put(
-          `http://https://ingenious-surprise-production.up.railway.app/notifications/${id}/read`,
+          `https://ingenious-surprise-production.up.railway.app/notifications/${id}/read`,
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         )
@@ -109,7 +109,7 @@ export default function HRNotification({ currentHrId }) {
       const token = localStorage.getItem("token");
       const promises = unreadNotifications.map(notification =>
         axios.put(
-          `http://https://ingenious-surprise-production.up.railway.app/notifications/${notification.id}/read`,
+          `https://ingenious-surprise-production.up.railway.app/notifications/${notification.id}/read`,
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         )

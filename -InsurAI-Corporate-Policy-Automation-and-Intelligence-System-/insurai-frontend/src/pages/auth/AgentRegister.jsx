@@ -70,7 +70,7 @@ export default function AgentRegister({ onBack }) {
       }
 
       const response = await axios.post(
-        "http://https://ingenious-surprise-production.up.railway.app/admin/agent/register",
+        "https://ingenious-surprise-production.up.railway.app/admin/agent/register",
         newAgent,
         {
           headers: { 

@@ -29,7 +29,7 @@ const HRFraud = () => {
   const fetchFraudAlerts = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://https://ingenious-surprise-production.up.railway.app/hr/claims/fraud", {
+      const response = await fetch("https://ingenious-surprise-production.up.railway.app/hr/claims/fraud", {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -54,7 +54,7 @@ const HRFraud = () => {
 const fetchEmployees = async () => {
   try {
     const token = localStorage.getItem("token");
-    const res = await fetch("http://https://ingenious-surprise-production.up.railway.app/employees", {
+    const res = await fetch("https://ingenious-surprise-production.up.railway.app/employees", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -369,7 +369,7 @@ const employeeMap = useMemo(() => {
                       </td>
                       <td>
                         {a.documents?.map((doc, i) => (
-                          <a key={i} href={`http://https://ingenious-surprise-production.up.railway.app${doc}`} target="_blank" className="d-block">
+                          <a key={i} href={`https://ingenious-surprise-production.up.railway.app${doc}`} target="_blank" className="d-block">
                             Doc {i + 1}
                           </a>
                         ))}
@@ -406,7 +406,7 @@ const employeeMap = useMemo(() => {
                 <p><strong>Documents:</strong></p>
                 <ul>
                   {viewingAlert.documents?.map((doc, i) => (
-                    <li key={i}><a href={`http://https://ingenious-surprise-production.up.railway.app${doc}`} target="_blank">Document {i + 1}</a></li>
+                    <li key={i}><a href={`https://ingenious-surprise-production.up.railway.app${doc}`} target="_blank">Document {i + 1}</a></li>
                   ))}
                 </ul>
               </div>

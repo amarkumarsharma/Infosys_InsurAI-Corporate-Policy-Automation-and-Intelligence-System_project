@@ -42,7 +42,7 @@ const fetchClaims = async () => {
 
   setLoading(true);
   try {
-    const res = await fetch("http://https://ingenious-surprise-production.up.railway.app/employee/claims", {
+    const res = await fetch("https://ingenious-surprise-production.up.railway.app/employee/claims", {
       headers: { Authorization: `Bearer ${token}` },
     });
     if (!res.ok) throw new Error("Failed to fetch claims");
@@ -225,9 +225,9 @@ const fetchClaims = async () => {
 
       newClaim.documents.forEach(file => formData.append("documents", file));
 
-      let url = "http://https://ingenious-surprise-production.up.railway.app/employee/claims";
+      let url = "https://ingenious-surprise-production.up.railway.app/employee/claims";
       if (newClaim.id) {
-        url = "http://https://ingenious-surprise-production.up.railway.app/employee/claims/update";
+        url = "https://ingenious-surprise-production.up.railway.app/employee/claims/update";
         formData.append("claimId", newClaim.id);
       }
 
@@ -680,7 +680,7 @@ const fetchClaims = async () => {
                       {viewingClaim.documents.map((doc, index) => (
                         <a 
                           key={index}
-                          href={`http://https://ingenious-surprise-production.up.railway.app${doc}`} 
+                          href={`https://ingenious-surprise-production.up.railway.app${doc}`} 
                           target="_blank" 
                           rel="noopener noreferrer"
                           className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
@@ -920,7 +920,7 @@ const renderNewClaimForm = () => {
                               </small>
                             </div>
                             <div>
-                              <a href={`http://https://ingenious-surprise-production.up.railway.app${doc}`} target="_blank" rel="noopener noreferrer"
+                              <a href={`https://ingenious-surprise-production.up.railway.app${doc}`} target="_blank" rel="noopener noreferrer"
                                  className="btn btn-sm btn-outline-primary me-1" title="View">
                                 <i className="bi bi-eye"></i>
                               </a>

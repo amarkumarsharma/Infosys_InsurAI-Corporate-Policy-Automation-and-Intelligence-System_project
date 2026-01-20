@@ -33,7 +33,7 @@ export default function ForgotPassword() {
 
     try {
       const res = await axios.post(
-        "http://https://ingenious-surprise-production.up.railway.app/auth/forgot-password",
+        "https://ingenious-surprise-production.up.railway.app/auth/forgot-password",
         { email: email.trim().toLowerCase() }
       );
 

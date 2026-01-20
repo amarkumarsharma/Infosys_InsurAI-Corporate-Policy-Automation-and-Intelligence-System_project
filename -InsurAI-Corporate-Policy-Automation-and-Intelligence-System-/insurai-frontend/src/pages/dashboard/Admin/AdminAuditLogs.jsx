@@ -16,7 +16,7 @@ const AdminAuditLogs = ({ themeColors }) => {
   // Fetch logs from backend
   useEffect(() => {
     setLoading(true);
-    fetch("http://https://ingenious-surprise-production.up.railway.app/admin/audit/logs", {
+    fetch("https://ingenious-surprise-production.up.railway.app/admin/audit/logs", {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())

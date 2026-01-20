@@ -61,7 +61,7 @@ export default function AdminFraudClaims() {
         const token = localStorage.getItem("token");
         if (!token) return console.error("❌ No admin token found!");
 
-        const response = await axios.get("http://https://ingenious-surprise-production.up.railway.app/admin/claims/fraud", {
+        const response = await axios.get("https://ingenious-surprise-production.up.railway.app/admin/claims/fraud", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setFraudClaims(response.data);
@@ -427,7 +427,7 @@ export default function AdminFraudClaims() {
                       {viewingClaim.documents.map((doc, i) => (
                         <li key={i}>
                           <a 
-                            href={`http://https://ingenious-surprise-production.up.railway.app${doc}`} 
+                            href={`https://ingenious-surprise-production.up.railway.app${doc}`} 
                             target="_blank" 
                             rel="noopener noreferrer"
                             style={{ color: COLORS.PRIMARY }}

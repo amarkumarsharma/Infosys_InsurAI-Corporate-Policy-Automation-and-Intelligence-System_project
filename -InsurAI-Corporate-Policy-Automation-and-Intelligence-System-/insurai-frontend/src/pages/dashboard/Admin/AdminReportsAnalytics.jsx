@@ -51,11 +51,11 @@ export default function AdminReportsAnalytics() {
       setLoading(true);
       try {
         const [usersRes, claimsRes, policiesRes, hrsRes, agentsRes] = await Promise.all([
-          axios.get("http://https://ingenious-surprise-production.up.railway.app/auth/employees", { headers: { Authorization: `Bearer ${token}` } }),
-          axios.get("http://https://ingenious-surprise-production.up.railway.app/admin/claims", { headers: { Authorization: `Bearer ${token}` } }),
-          axios.get("http://https://ingenious-surprise-production.up.railway.app/admin/policies", { headers: { Authorization: `Bearer ${token}` } }),
-          axios.get("http://https://ingenious-surprise-production.up.railway.app/hr", { headers: { Authorization: `Bearer ${token}` } }),
-          axios.get("http://https://ingenious-surprise-production.up.railway.app/agent", { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get("https://ingenious-surprise-production.up.railway.app/auth/employees", { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get("https://ingenious-surprise-production.up.railway.app/admin/claims", { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get("https://ingenious-surprise-production.up.railway.app/admin/policies", { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get("https://ingenious-surprise-production.up.railway.app/hr", { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get("https://ingenious-surprise-production.up.railway.app/agent", { headers: { Authorization: `Bearer ${token}` } }),
         ]);
 
         setUsers(usersRes.data || []);

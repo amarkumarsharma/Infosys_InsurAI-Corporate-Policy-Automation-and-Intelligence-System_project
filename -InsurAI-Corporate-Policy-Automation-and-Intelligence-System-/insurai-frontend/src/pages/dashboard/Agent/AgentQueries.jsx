@@ -506,7 +506,7 @@ export default function AgentQueries({
                                   onClick={async () => {
                                     try {
                                       await axios.put(
-                                        `http://https://ingenious-surprise-production.up.railway.app/agent/queries/respond/${query.id}`,
+                                        `https://ingenious-surprise-production.up.railway.app/agent/queries/respond/${query.id}`,
                                         { response: query.response || "Resolved" },
                                         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
                                       );

@@ -33,7 +33,7 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://https://ingenious-surprise-production.up.railway.app/admin/login", {
+      const res = await fetch("https://ingenious-surprise-production.up.railway.app/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

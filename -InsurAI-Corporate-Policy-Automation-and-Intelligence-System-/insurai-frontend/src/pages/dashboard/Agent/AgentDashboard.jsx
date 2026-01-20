@@ -42,7 +42,7 @@ export default function AgentDashboard() {
       const axiosConfig = { headers: { Authorization: `Bearer ${token}` } };
 
       // Fetch availability
-      axios.get(`http://https://ingenious-surprise-production.up.railway.app/agent/${id}/availability`, axiosConfig)
+      axios.get(`https://ingenious-surprise-production.up.railway.app/agent/${id}/availability`, axiosConfig)
         .then(res => {
           if (res.data && typeof res.data.available === "boolean") {
             setAvailability(res.data.available);
@@ -52,14 +52,14 @@ export default function AgentDashboard() {
 
       // Fetch all employees once
       let employeeMap = {};
-      axios.get("http://https://ingenious-surprise-production.up.railway.app/auth/employees", axiosConfig)
+      axios.get("https://ingenious-surprise-production.up.railway.app/auth/employees", axiosConfig)
         .then(empRes => {
           empRes.data.forEach(emp => {
             employeeMap[emp.id] = emp.name;
           });
 
           // Fetch all queries
-          axios.get(`http://https://ingenious-surprise-production.up.railway.app/agent/queries/all/${id}`, axiosConfig)
+          axios.get(`https://ingenious-surprise-production.up.railway.app/agent/queries/all/${id}`, axiosConfig)
             .then(res => {
               if (res.data) {
                 const allQueries = res.data.map(q => ({
@@ -116,14 +116,14 @@ export default function AgentDashboard() {
 
       const axiosConfig = { headers: { Authorization: `Bearer ${token}` } };
 
-      await axios.post("http://https://ingenious-surprise-production.up.railway.app/agent/availability", {
+      await axios.post("https://ingenious-surprise-production.up.railway.app/agent/availability", {
         agentId,
         available: newStatus,
         startTime: new Date().toISOString(),
         endTime: null
       }, axiosConfig);
 
-      const res = await axios.get(`http://https://ingenious-surprise-production.up.railway.app/agent/${agentId}/availability`, axiosConfig);
+      const res = await axios.get(`https://ingenious-surprise-production.up.railway.app/agent/${agentId}/availability`, axiosConfig);
       if (res.data) setAvailability(res.data.available);
 
       alert(`You are now ${newStatus ? "available" : "unavailable"} for queries`);
@@ -149,14 +149,14 @@ export default function AgentDashboard() {
       const startISO = new Date(futureFrom).toISOString();
       const endISO = new Date(futureTo).toISOString();
 
-      await axios.post("http://https://ingenious-surprise-production.up.railway.app/agent/availability", {
+      await axios.post("https://ingenious-surprise-production.up.railway.app/agent/availability", {
         agentId,
         available: true,
         startTime: startISO,
         endTime: endISO
       }, axiosConfig);
 
-      const res = await axios.get(`http://https://ingenious-surprise-production.up.railway.app/agent/${agentId}/availability`, axiosConfig);
+      const res = await axios.get(`https://ingenious-surprise-production.up.railway.app/agent/${agentId}/availability`, axiosConfig);
       if (res.data) setAvailability(res.data.available);
 
       alert("Future availability scheduled successfully!");
@@ -178,7 +178,7 @@ export default function AgentDashboard() {
       if (!query) return alert("Query not found");
 
       await axios.put(
-        `http://https://ingenious-surprise-production.up.railway.app/agent/queries/respond/${id}`,
+        `https://ingenious-surprise-production.up.railway.app/agent/queries/respond/${id}`,
         { response: responseText },
         { headers: { Authorization: `Bearer ${token}` } }
       );

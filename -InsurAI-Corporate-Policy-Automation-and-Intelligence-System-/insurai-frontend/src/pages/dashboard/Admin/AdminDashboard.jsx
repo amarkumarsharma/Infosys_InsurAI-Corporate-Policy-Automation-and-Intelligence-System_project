@@ -173,13 +173,13 @@ export default function AdminDashboard() {
       const token = localStorage.getItem("token");
 
       const [agentsRes, employeesRes, hrsRes] = await Promise.all([
-        axios.get("http://https://ingenious-surprise-production.up.railway.app/agent", {
+        axios.get("https://ingenious-surprise-production.up.railway.app/agent", {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get("http://https://ingenious-surprise-production.up.railway.app/auth/employees", {
+        axios.get("https://ingenious-surprise-production.up.railway.app/auth/employees", {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get("http://https://ingenious-surprise-production.up.railway.app/hr", {
+        axios.get("https://ingenious-surprise-production.up.railway.app/hr", {
           headers: { Authorization: `Bearer ${token}` },
         })
       ]);
@@ -224,16 +224,16 @@ export default function AdminDashboard() {
       if (!token) return;
 
       const [claimsRes, empRes, hrRes, policyRes] = await Promise.all([
-        fetch("http://https://ingenious-surprise-production.up.railway.app/admin/claims", {
+        fetch("https://ingenious-surprise-production.up.railway.app/admin/claims", {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch("http://https://ingenious-surprise-production.up.railway.app/auth/employees", {
+        fetch("https://ingenious-surprise-production.up.railway.app/auth/employees", {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch("http://https://ingenious-surprise-production.up.railway.app/hr", {
+        fetch("https://ingenious-surprise-production.up.railway.app/hr", {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch("http://https://ingenious-surprise-production.up.railway.app/admin/policies", {
+        fetch("https://ingenious-surprise-production.up.railway.app/admin/policies", {
           headers: { Authorization: `Bearer ${token}` },
         })
       ]);
@@ -288,7 +288,7 @@ export default function AdminDashboard() {
     
 
     await axios.post(
-      "http://https://ingenious-surprise-production.up.railway.app/admin/hr/register",
+      "https://ingenious-surprise-production.up.railway.app/admin/hr/register",
       payload,
       {
         headers: {
@@ -311,7 +311,7 @@ export default function AdminDashboard() {
 const handleRegisterAgent = async (agentData) => {
   try {
     const token = localStorage.getItem("token");
-    await axios.post("http://https://ingenious-surprise-production.up.railway.app/admin/agent/register", agentData, {
+    await axios.post("https://ingenious-surprise-production.up.railway.app/admin/agent/register", agentData, {
       headers: { Authorization: `Bearer ${token}` },
     });
     setNewAgent({ name: "", email: "", password: "" });

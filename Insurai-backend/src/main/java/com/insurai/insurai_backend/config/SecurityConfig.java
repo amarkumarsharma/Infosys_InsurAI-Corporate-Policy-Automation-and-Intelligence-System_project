@@ -2,81 +2,96 @@ package com.insurai.insurai_backend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 @Configuration
 public class SecurityConfig {
 
     private final EmployeeJwtAuthenticationFilter employeeJwtAuthenticationFilter;
     private final AgentJwtAuthenticationFilter agentJwtAuthenticationFilter;
-    private final HrJwtAuthenticationFilter hrJwtAuthenticationFilter;
+    private final HrJwtAuthenticationFilter hrJwtAuthenticationFilter; // Added
 
     public SecurityConfig(EmployeeJwtAuthenticationFilter employeeJwtAuthenticationFilter,
                           AgentJwtAuthenticationFilter agentJwtAuthenticationFilter,
-                          HrJwtAuthenticationFilter hrJwtAuthenticationFilter) {
+                          HrJwtAuthenticationFilter hrJwtAuthenticationFilter) { // Added
         this.employeeJwtAuthenticationFilter = employeeJwtAuthenticationFilter;
         this.agentJwtAuthenticationFilter = agentJwtAuthenticationFilter;
-        this.hrJwtAuthenticationFilter = hrJwtAuthenticationFilter;
+        this.hrJwtAuthenticationFilter = hrJwtAuthenticationFilter; // Added
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
         http
             .csrf(csrf -> csrf.disable())
-            .cors(cors -> {})
-            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
+            .cors(cors -> {}) // Keep global CORS
             .authorizeHttpRequests(auth -> auth
+                // Employee claim endpoints
+                .requestMatchers("/employee/claims/**").hasRole("EMPLOYEE")
+                .requestMatchers("/employee/queries/**").hasRole("EMPLOYEE")
+                .requestMatchers("/uploads/**").permitAll()
+                .requestMatchers("/hr/claims").hasAnyRole("HR")
+                .requestMatchers("/admin/claims").hasAnyRole("ADMIN")
+                .requestMatchers("/hr/claims/fraud").hasRole("HR")
+                .requestMatchers("/admin/claims/fraud").hasRole("ADMIN")
+                // Notifications endpoints
+               .requestMatchers("/notifications/user/**").hasAnyAuthority("ROLE_EMPLOYEE", "ROLE_HR", "ROLE_ADMIN")
+.requestMatchers("/notifications/**").hasAnyRole("HR", "ADMIN") // delete endpoints
+.requestMatchers("/notifications/*/read").hasAnyAuthority("ROLE_EMPLOYEE", "ROLE_HR", "ROLE_ADMIN") // allow mark as read
 
-                // Allow preflight
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+    .requestMatchers("/employee/chatbot").hasRole("EMPLOYEE")
 
-                // H2 Console
-                .requestMatchers("/h2-console/**").permitAll()
+
+
 
                 // Public endpoints
                 .requestMatchers(
-                        "/auth/**",
-                        "/agent/login",
-                        "/agent/register",
-                        "/employee/login",
-                        "/employee/register",
-                        "/hr/login",
-                        "/admin/login",
-                        "/auth/forgot-password",
-                        "/auth/reset-password/**"
+                    "/auth/**",
+                    "/auth/forgot-password",
+                    "/auth/reset-password/**", 
+                    "/admin/**",
+                    "/admin/policies",
+                    "/admin/policies/save",
+                    "/agent/**",
+                    "/employee/login",
+                    "/agent/login",
+                    "/employee/register",
+                    "/employee/policies",
+                    "/hr/login",
+                    "/agent/availability/**",
+                    "/agent/queries/pending/**",
+                    "/employees/**",
+                    "/hr/**"
                 ).permitAll()
 
-                // Static / uploads
-                .requestMatchers("/uploads/**").permitAll()
-                .requestMatchers("/employee/policies").permitAll()
+                // Agent endpoints
+                .requestMatchers("/agent/queries/respond/**", "/agent/queries/all/**").hasRole("AGENT")
 
-                // Secured endpoints
-                .requestMatchers("/agent/**").hasAuthority("AGENT")
-                .requestMatchers("/employee/**").hasAuthority("EMPLOYEE")
-                .requestMatchers("/hr/**").hasAuthority("HR")
-                .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                // Employee endpoints (other than claims/queries)
+                .requestMatchers("/employee/**").hasRole("EMPLOYEE")
 
+                // Claim endpoints for HR/Admin
+                .requestMatchers(
+                    "/claims/approve/**",
+                    "/claims/reject/**",
+                    "/claims/all"
+                ).hasAnyRole("HR", "ADMIN")
+
+                // Everything else requires authentication
                 .anyRequest().authenticated()
             )
             .httpBasic(httpBasic -> httpBasic.disable())
             .formLogin(formLogin -> formLogin.disable());
 
-        // Order matters: JWT filters must run before UsernamePasswordAuthenticationFilter
+        // Add JWT filters in order
         http.addFilterBefore(employeeJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(agentJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(hrJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(hrJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Added
 
         return http.build();
     }
@@ -86,29 +101,14 @@ public class SecurityConfig {
         return authConfig.getAuthenticationManager();
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    // Mail sender
-    @Bean
-    public JavaMailSender javaMailSender() {
-        return new JavaMailSenderImpl();
-    }
-
-    // CORS Configuration
+    // Global CORS configuration
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins(
-                                "http://localhost:5173",
-                                "http://localhost:5174",
-                                "http://localhost:8080"
-                        )
+                        .allowedOrigins("http://localhost:5173", "http://localhost:8080")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);

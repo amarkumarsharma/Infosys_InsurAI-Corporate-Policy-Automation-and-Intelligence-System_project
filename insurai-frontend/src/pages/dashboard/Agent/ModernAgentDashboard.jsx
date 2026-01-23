@@ -19,7 +19,7 @@ const ModernAgentDashboard = () => {
     { icon: Target, label: 'Policies Sold', value: '12', color: 'green' },
     { icon: TrendingUp, label: 'Commission', value: '$5,250', color: 'purple' },
     { icon: Calendar, label: 'This Month', value: 'In Progress', color: 'yellow' },
-  ]
+  ];
 
   return (
     <DashboardLayout userRole="agent" userName={userName} userEmail={userEmail}>

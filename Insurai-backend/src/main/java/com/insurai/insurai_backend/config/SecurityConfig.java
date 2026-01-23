@@ -9,12 +9,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-
-
 
 @Configuration
 public class SecurityConfig {
@@ -30,15 +24,6 @@ public class SecurityConfig {
         this.agentJwtAuthenticationFilter = agentJwtAuthenticationFilter;
         this.hrJwtAuthenticationFilter = hrJwtAuthenticationFilter; // Added
     }
-    @Bean
-public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-}
-@Bean
-public JavaMailSender javaMailSender() {
-    return new JavaMailSenderImpl();
-}
-
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

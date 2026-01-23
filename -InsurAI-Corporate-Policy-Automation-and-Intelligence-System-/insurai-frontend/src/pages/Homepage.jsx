@@ -54,6 +54,26 @@ const scaleHover = {
   },
 };
 
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const floatAnimation = {
+  y: [-10, 10, -10],
+  transition: {
+    duration: 4,
+    repeat: Infinity,
+    ease: "easeInOut",
+  },
+};
+
 /* =========================
    MAIN COMPONENT
 ========================= */
@@ -82,7 +102,11 @@ const HomePage = () => {
       >
         <div style={styles.navContent}>
           <div style={styles.brand}>
-            Insur<span style={styles.brandAccent}>AI</span>
+            <img 
+              src="project-logo-img-dark.svg" 
+              alt="InsurAI Logo" 
+              style={styles.logo}
+            />
           </div>
 
           <div style={styles.navLinks}>
@@ -94,6 +118,13 @@ const HomePage = () => {
               Platform
             </a>
             <a
+              href="#features"
+              style={styles.navLink}
+              onClick={(e) => handleNavClick(e, "features")}
+            >
+              Features
+            </a>
+            <a
               href="#workflow"
               style={styles.navLink}
               onClick={(e) => handleNavClick(e, "workflow")}
@@ -101,11 +132,18 @@ const HomePage = () => {
               Workflow
             </a>
             <a
-              href="#roles"
+              href="#technology"
               style={styles.navLink}
-              onClick={(e) => handleNavClick(e, "roles")}
+              onClick={(e) => handleNavClick(e, "technology")}
             >
-              Roles
+              Technology
+            </a>
+            <a
+              href="#about"
+              style={styles.navLink}
+              onClick={(e) => handleNavClick(e, "about")}
+            >
+              About
             </a>
             <a
               href="#login"
@@ -133,8 +171,10 @@ const HomePage = () => {
           </h1>
 
           <p style={styles.heroSubtitle}>
-            A next-generation insurance platform with automated claims,
-            intelligent risk analysis, and enterprise-grade security.
+            A next-generation insurance platform powered by advanced AI algorithms,
+            featuring automated claims processing, intelligent fraud detection,
+            real-time analytics, and enterprise-grade security. Transform your
+            insurance operations with cutting-edge technology and seamless workflow automation.
           </p>
 
           <motion.div
@@ -174,23 +214,111 @@ const HomePage = () => {
           viewport={{ once: true }}
           style={styles.sectionTitle}
         >
-          Platform Capabilities
+          Platform <span style={styles.heroGradient}>Capabilities</span>
         </motion.h2>
 
-        <div style={styles.grid}>
+        <motion.div 
+          style={styles.grid}
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
           {features.map((f, i) => (
             <motion.div
               key={i}
-              {...glowHover}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.15 }}
+              variants={fadeUp}
+              whileHover={{ 
+                y: -12,
+                boxShadow: theme.glow,
+                borderColor: "rgba(56,189,248,0.5)"
+              }}
               viewport={{ once: true }}
               style={styles.card}
             >
-              <div style={styles.icon}>{f.icon}</div>
+              <motion.div 
+                style={styles.icon}
+                animate={{
+                  rotate: [0, 5, -5, 0],
+                  transition: { duration: 3, repeat: Infinity, ease: "easeInOut" }
+                }}
+              >
+                {f.icon}
+              </motion.div>
               <h3 style={styles.cardTitle}>{f.title}</h3>
               <p style={styles.cardText}>{f.desc}</p>
+              <div style={styles.cardGlow} />
+            </motion.div>
+          ))}
+        </motion.div>
+      </section>
+
+      {/* ================= FEATURES SHOWCASE ================= */}
+      <section id="features" style={styles.section}>
+        <motion.h2
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          style={styles.sectionTitle}
+        >
+          Advanced <span style={styles.heroGradient}>Features</span>
+        </motion.h2>
+
+        <div style={styles.featuresShowcase}>
+          {advancedFeatures.map((feature, i) => (
+            <motion.div
+              key={i}
+              {...glowHover}
+              initial={{ opacity: 0, x: i % 2 === 0 ? -40 : 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.2 }}
+              viewport={{ once: true }}
+              style={styles.featureShowcaseCard}
+            >
+              <div style={styles.featureShowcaseIcon}>{feature.icon}</div>
+              <div style={styles.featureShowcaseContent}>
+                <h3 style={styles.featureShowcaseTitle}>{feature.title}</h3>
+                <p style={styles.featureShowcaseDesc}>{feature.desc}</p>
+                <ul style={styles.featureList}>
+                  {feature.points.map((point, idx) => (
+                    <li key={idx} style={styles.featureListItem}>
+                      <span style={styles.checkmark}>✓</span> {point}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ================= STATISTICS ================= */}
+      <section style={styles.statsSection}>
+        <motion.h2
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          style={styles.sectionTitle}
+        >
+          Platform <span style={styles.heroGradient}>Performance</span>
+        </motion.h2>
+
+        <div style={styles.statsGrid}>
+          {statistics.map((stat, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ delay: i * 0.15 }}
+              viewport={{ once: true }}
+              style={styles.statCard}
+            >
+              <div style={styles.statIcon}>{stat.icon}</div>
+              <div style={styles.statValue}>{stat.value}</div>
+              <div style={styles.statLabel}>{stat.label}</div>
+              <div style={styles.statDesc}>{stat.desc}</div>
             </motion.div>
           ))}
         </div>
@@ -205,27 +333,42 @@ const HomePage = () => {
           viewport={{ once: true }}
           style={styles.sectionTitle}
         >
-          Intelligent Workflow
+          Intelligent <span style={styles.heroGradient}>Workflow</span>
         </motion.h2>
 
-        <div style={styles.workflow}>
+        <motion.div 
+          style={styles.workflow}
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          <div style={styles.workflowLine} />
           {workflow.map((step, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, x: -40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.2 }}
+              variants={fadeUp}
+              whileHover={{ 
+                scale: 1.02, 
+                boxShadow: "0 0 40px rgba(56,189,248,0.4), 0 8px 32px rgba(0,0,0,0.4)",
+                borderColor: "rgba(56,189,248,0.5)"
+              }}
               viewport={{ once: true }}
               style={styles.workflowStep}
             >
-              <div style={styles.stepIndex}>{i + 1}</div>
-              <div>
+              <motion.div 
+                style={styles.stepIndex}
+                animate={floatAnimation}
+              >
+                {i + 1}
+              </motion.div>
+              <div style={{ flex: 1 }}>
                 <h4 style={styles.stepTitle}>{step.title}</h4>
                 <p style={styles.stepText}>{step.text}</p>
               </div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
       {/* ================= ROLE SELECTION (NEW) ================= */}
@@ -285,6 +428,40 @@ const HomePage = () => {
         </motion.div>
       </section>
 
+      {/* ================= TECHNOLOGY STACK (REPLACED) ================= */}
+      <section id="technology" style={styles.section}>
+        <motion.h2
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          style={styles.sectionTitle}
+        >
+          Core Application <span style={styles.heroGradient}>Modules</span>
+        </motion.h2>
+
+        <div style={styles.techGrid}>
+          {techStack.map((mod, i) => (
+            <motion.div
+              key={i}
+              {...scaleHover}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.08 }}
+              viewport={{ once: true }}
+              style={styles.techCard}
+            >
+              <div style={styles.techIcon}>{mod.icon}</div>
+              <div style={{ flex: 1 }}>
+                <h4 style={styles.techName}>{mod.name}</h4>
+                <div style={styles.techCategory}>{mod.category}</div>
+                <p style={styles.techDesc}>{mod.desc}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
       {/* ================= ROLES INFO ================= */}
       <section id="roles" style={styles.section}>
         <motion.h2
@@ -311,6 +488,76 @@ const HomePage = () => {
               <div style={styles.icon}>{r.icon}</div>
               <h3 style={styles.cardTitle}>{r.title}</h3>
               <p style={styles.cardText}>{r.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ================= ABOUT / TESTIMONIALS ================= */}
+      <section id="about" style={styles.section}>
+        <motion.h2
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          style={styles.sectionTitle}
+        >
+          Why Choose <span style={styles.heroGradient}>InsurAI</span>
+        </motion.h2>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          style={styles.aboutContent}
+        >
+          <div style={styles.aboutContainer}>
+            <p style={styles.aboutText}>
+              InsurAI is revolutionizing the insurance industry by combining artificial intelligence
+              with enterprise-grade infrastructure. Our platform automates complex workflows, reduces
+              processing time by up to 90%, and provides real-time insights that drive better business
+              decisions. Built for scale and designed for security, InsurAI serves organizations of
+              all sizes with a flexible, role-based architecture.
+            </p>
+            <p style={styles.aboutText}>
+              From automated claim processing to intelligent fraud detection, our AI-powered engine
+              handles millions of transactions while maintaining accuracy and compliance. With
+              comprehensive dashboards for every role—Employee, HR, Agent, and Admin—everyone gets
+              the tools they need to succeed.
+            </p>
+          </div>
+        </motion.div>
+
+        <motion.h3
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          style={{ ...styles.sectionTitle, fontSize: "1.8rem", marginTop: "4rem" }}
+        >
+          What Our Clients Say
+        </motion.h3>
+
+        <div style={styles.testimonialsGrid}>
+          {testimonials.map((testimonial, i) => (
+            <motion.div
+              key={i}
+              {...glowHover}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.2 }}
+              viewport={{ once: true }}
+              style={styles.testimonialCard}
+            >
+              <div style={styles.quoteIcon}>"</div>
+              <p style={styles.testimonialText}>{testimonial.text}</p>
+              <div style={styles.testimonialAuthor}>
+                <div style={styles.authorAvatar}>{testimonial.avatar}</div>
+                <div>
+                  <div style={styles.authorName}>{testimonial.name}</div>
+                  <div style={styles.authorRole}>{testimonial.role}</div>
+                </div>
+              </div>
             </motion.div>
           ))}
         </div>
@@ -379,6 +626,140 @@ const features = [
   { icon: "⚡", title: "Instant Processing", desc: "Optimized backend pipelines for fast approvals." }
 ];
 
+const advancedFeatures = [
+  {
+    icon: "🤖",
+    title: "AI-Powered Automation",
+    desc: "Leverage machine learning algorithms to automate claim processing, policy validation, and risk assessment.",
+    points: [
+      "Automated fraud detection with 95%+ accuracy",
+      "Smart claim routing and prioritization",
+      "Predictive analytics for risk management",
+      "Natural language processing for document analysis"
+    ]
+  },
+  {
+    icon: "📈",
+    title: "Advanced Analytics Dashboard",
+    desc: "Comprehensive real-time insights across all business operations with customizable reporting.",
+    points: [
+      "Real-time KPI tracking and monitoring",
+      "Custom report generation and exports",
+      "Predictive trend analysis",
+      "Multi-dimensional data visualization"
+    ]
+  },
+  {
+    icon: "🛡️",
+    title: "Enterprise Security",
+    desc: "Bank-grade security with multi-layer protection, encryption, and compliance standards.",
+    points: [
+      "End-to-end encryption (AES-256)",
+      "Multi-factor authentication (MFA)",
+      "Role-based access control (RBAC)",
+      "Compliance with GDPR, HIPAA, and SOC 2"
+    ]
+  },
+  {
+    icon: "⚙️",
+    title: "Seamless Integration",
+    desc: "Connect with existing systems and third-party services through our robust API infrastructure.",
+    points: [
+      "RESTful API with comprehensive documentation",
+      "Pre-built integrations with major platforms",
+      "Webhook support for real-time events",
+      "Scalable microservices architecture"
+    ]
+  }
+];
+
+const statistics = [
+  {
+    icon: "⚡",
+    value: "90%",
+    label: "Faster Processing",
+    desc: "Average reduction in claim processing time"
+  },
+  {
+    icon: "🎯",
+    value: "95%",
+    label: "Accuracy Rate",
+    desc: "AI-powered fraud detection accuracy"
+  },
+  {
+    icon: "👥",
+    value: "10K+",
+    label: "Active Users",
+    desc: "Employees and agents using the platform"
+  },
+  {
+    icon: "💰",
+    value: "$5M+",
+    label: "Saved Annually",
+    desc: "Cost reduction through automation"
+  }
+];
+
+const techStack = [
+  {
+    icon: "🧠",
+    name: "AI Claim Engine",
+    category: "Core",
+    desc: "Automated claim validation, fraud scoring and priority routing — integrated with policy state."
+  },
+  {
+    icon: "🗂️",
+    name: "Policy Manager",
+    category: "Core",
+    desc: "Full lifecycle policy creation, versioning, endorsements and rule-driven validations."
+  },
+  {
+    icon: "🛡️",
+    name: "Fraud Detection",
+    category: "Security",
+    desc: "Real-time anomaly detection using ML models and rule-based heuristics for high-risk flags."
+  },
+  {
+    icon: "🔁",
+    name: "Workflow Orchestrator",
+    category: "Platform",
+    desc: "Configurable pipelines for approvals, escalations and automated settlements."
+  },
+  {
+    icon: "📊",
+    name: "Analytics Dashboard",
+    category: "Observability",
+    desc: "Role-based insights, trend analysis and exportable reports for Agents, HR and Admins."
+  },
+  {
+    icon: "🔗",
+    name: "Integrations & API",
+    category: "Integration",
+    desc: "REST/GraphQL APIs, webhooks and prebuilt connectors for third-party systems and payroll."
+  }
+];
+
+const testimonials = [
+  {
+    text: "InsurAI has transformed our claim processing workflow. What used to take days now takes hours. The AI-powered fraud detection alone has saved us millions.",
+    name: "Sarah Johnson",
+    role: "Chief Operations Officer, GlobalInsure",
+    avatar: "👩‍💼"
+  },
+  {
+    text: "The role-based dashboards are incredibly intuitive. Our HR team can now manage policies for thousands of employees with ease. Game-changing platform!",
+    name: "Michael Chen",
+    role: "HR Director, TechCorp Industries",
+    avatar: "👨‍💼"
+  },
+  {
+    text: "As an agent, I can now assist 3x more customers per day. The automated workflows and real-time data access make my job so much more efficient.",
+    name: "Emily Rodriguez",
+    role: "Senior Insurance Agent, SecureLife",
+    avatar: "👩‍💻"
+  }
+];
+
 const workflow = [
   { title: "Policy Creation", text: "Admin defines coverage, premiums, and lifecycle." },
   { title: "Enrollment", text: "Employees select policies aligned to their needs." },
@@ -445,9 +826,10 @@ const styles = {
     top: 0,
     width: "100%",
     zIndex: 100,
-    background: theme.surface,
-    backdropFilter: "blur(14px)",
-    borderBottom: `1px solid ${theme.border}`,
+    background: "rgba(2,6,23,0.85)",
+    backdropFilter: "blur(20px) saturate(180%)",
+    borderBottom: `1px solid rgba(56,189,248,0.2)`,
+    boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
   },
 
   navContent: {
@@ -464,6 +846,16 @@ const styles = {
     fontWeight: 700,
     letterSpacing: "0.5px",
     cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    gap: "0.7rem",
+  },
+
+  logo: {
+    height: "45px",
+    width: "auto",
+    display: "block",
+    objectFit: "contain",
   },
 
   brandAccent: {
@@ -504,6 +896,8 @@ const styles = {
     justifyContent: "center",
     position: "relative",
     paddingTop: "6rem",
+    background: "radial-gradient(ellipse at top, rgba(56,189,248,0.15) 0%, transparent 50%)",
+    overflow: "hidden",
   },
 
   heroContent: {
@@ -588,17 +982,23 @@ const styles = {
 
   sectionAlt: {
     maxWidth: "1200px",
-    margin: "0 auto",
-    padding: "6rem 2rem",
-    background: "rgba(15,23,42,0.35)",
-    borderRadius: "32px",
+    margin: "4rem auto",
+    padding: "6rem 3rem",
+    background: "linear-gradient(135deg, rgba(15,23,42,0.6) 0%, rgba(2,6,23,0.8) 100%)",
+    borderRadius: "40px",
+    border: "1px solid rgba(56,189,248,0.2)",
+    boxShadow: "0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)",
+    position: "relative",
+    overflow: "hidden",
   },
 
   sectionTitle: {
     textAlign: "center",
-    fontSize: "2.2rem",
-    fontWeight: 700,
-    marginBottom: "3.5rem",
+    fontSize: "2.8rem",
+    fontWeight: 800,
+    marginBottom: "4rem",
+    letterSpacing: "-0.02em",
+    lineHeight: 1.2,
   },
 
   grid: {
@@ -608,16 +1008,32 @@ const styles = {
   },
 
   card: {
-    background: theme.surface,
-    border: `1px solid ${theme.border}`,
-    borderRadius: "20px",
-    padding: "2.2rem",
-    backdropFilter: "blur(20px)",
+    background: "linear-gradient(135deg, rgba(15,23,42,0.8) 0%, rgba(15,23,42,0.6) 100%)",
+    border: `1px solid rgba(56,189,248,0.2)`,
+    borderRadius: "24px",
+    padding: "2.5rem",
+    backdropFilter: "blur(24px)",
+    boxShadow: "0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)",
+    position: "relative",
+    overflow: "hidden",
   },
 
   icon: {
-    fontSize: "2.4rem",
-    marginBottom: "1rem",
+    fontSize: "2.8rem",
+    marginBottom: "1.2rem",
+    filter: "drop-shadow(0 4px 12px rgba(56,189,248,0.3))",
+  },
+
+  cardGlow: {
+    position: "absolute",
+    top: "-50%",
+    left: "-50%",
+    width: "200%",
+    height: "200%",
+    background: "radial-gradient(circle, rgba(56,189,248,0.1) 0%, transparent 70%)",
+    pointerEvents: "none",
+    opacity: 0,
+    transition: "opacity 0.5s ease",
   },
 
   cardTitle: {
@@ -632,38 +1048,66 @@ const styles = {
   },
 
   workflow: {
-    maxWidth: "800px",
+    maxWidth: "900px",
     margin: "0 auto",
     display: "grid",
-    gap: "1.5rem",
+    gap: "2rem",
+    position: "relative",
+  },
+
+  workflowLine: {
+    position: "absolute",
+    left: "28px",
+    top: "50px",
+    bottom: "50px",
+    width: "3px",
+    background: "linear-gradient(180deg, rgba(56,189,248,0.8) 0%, rgba(129,140,248,0.8) 50%, rgba(244,114,182,0.8) 100%)",
+    boxShadow: "0 0 20px rgba(56,189,248,0.5), 0 0 40px rgba(129,140,248,0.3)",
   },
 
   workflowStep: {
     display: "flex",
-    gap: "1rem",
+    gap: "1.5rem",
     alignItems: "flex-start",
+    position: "relative",
+    background: "rgba(15,23,42,0.6)",
+    padding: "2rem",
+    borderRadius: "20px",
+    border: "1px solid rgba(56,189,248,0.2)",
+    backdropFilter: "blur(20px)",
+    boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
   },
 
   stepIndex: {
-    width: "34px",
-    height: "34px",
+    width: "56px",
+    height: "56px",
     borderRadius: "50%",
     background: theme.gradientNeon,
     color: "#020617",
-    fontWeight: 700,
+    fontWeight: 800,
+    fontSize: "1.3rem",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     flexShrink: 0,
+    boxShadow: "0 0 30px rgba(56,189,248,0.6), 0 0 60px rgba(129,140,248,0.4)",
+    border: "3px solid rgba(2,6,23,0.9)",
   },
 
   stepTitle: {
-    fontWeight: 600,
+    fontWeight: 700,
+    fontSize: "1.3rem",
+    color: theme.textPrimary,
+    marginBottom: "0.5rem",
+    background: theme.gradientNeon,
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
   },
 
   stepText: {
-    fontSize: "0.9rem",
+    fontSize: "1rem",
     color: theme.textSecondary,
+    lineHeight: 1.6,
   },
 
  accessGrid: {
@@ -674,18 +1118,23 @@ const styles = {
   },
 
  accessCard: {
-    background: "rgba(15,23,42,0.6)",
+    background: "linear-gradient(135deg, rgba(15,23,42,0.8) 0%, rgba(15,23,42,0.6) 100%)",
     border: `1px solid ${theme.border}`,
-    borderRadius: "18px",
-    padding: "1.5rem",
+    borderRadius: "24px",
+    padding: "2rem",
     display: "flex",
     flexDirection: "column",
-    gap: "0.9rem",
-    minHeight: "200px",
+    gap: "1rem",
+    minHeight: "220px",
+    boxShadow: "0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)",
+    backdropFilter: "blur(20px)",
+    position: "relative",
+    overflow: "hidden",
   },
 
  accessIcon: {
-    fontSize: "2rem",
+    fontSize: "2.8rem",
+    filter: "drop-shadow(0 4px 12px rgba(56,189,248,0.4))",
   },
 
  accessLabel: {
@@ -710,12 +1159,15 @@ const styles = {
 
   accessButton: {
     marginTop: "auto",
-    borderRadius: "12px",
-    border: "1px solid transparent",
-    background: "transparent",
-    fontWeight: 600,
-    padding: "0.7rem 1rem",
+    borderRadius: "14px",
+    border: "2px solid transparent",
+    background: "rgba(15,23,42,0.6)",
+    fontWeight: 700,
+    padding: "0.9rem 1.5rem",
     cursor: "pointer",
+    fontSize: "0.95rem",
+    transition: "all 0.3s ease",
+    boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
   },
 
   footer: {
@@ -770,6 +1222,251 @@ const styles = {
     flexDirection: "column",
     gap: "0.4rem",
     alignItems: "flex-end",
+  },
+
+  featuresShowcase: {
+    display: "grid",
+    gap: "2rem",
+    maxWidth: "1000px",
+    margin: "0 auto",
+  },
+
+  featureShowcaseCard: {
+    background: theme.surface,
+    border: `1px solid ${theme.border}`,
+    borderRadius: "20px",
+    padding: "2.5rem",
+    display: "flex",
+    gap: "2rem",
+    backdropFilter: "blur(20px)",
+    alignItems: "flex-start",
+  },
+
+  featureShowcaseIcon: {
+    fontSize: "3.5rem",
+    flexShrink: 0,
+  },
+
+  featureShowcaseContent: {
+    flex: 1,
+  },
+
+  featureShowcaseTitle: {
+    fontSize: "1.5rem",
+    fontWeight: 700,
+    marginBottom: "0.8rem",
+  },
+
+  featureShowcaseDesc: {
+    color: theme.textSecondary,
+    marginBottom: "1.2rem",
+    lineHeight: 1.6,
+  },
+
+  featureList: {
+    listStyle: "none",
+    padding: 0,
+    margin: 0,
+    display: "grid",
+    gap: "0.7rem",
+  },
+
+  featureListItem: {
+    display: "flex",
+    alignItems: "center",
+    gap: "0.7rem",
+    color: theme.textSecondary,
+    fontSize: "0.95rem",
+  },
+
+  checkmark: {
+    color: theme.neonGreen,
+    fontWeight: 700,
+    fontSize: "1.1rem",
+  },
+
+  statsSection: {
+    maxWidth: "1200px",
+    margin: "0 auto",
+    padding: "6rem 2rem",
+    background: "rgba(15,23,42,0.35)",
+    borderRadius: "32px",
+  },
+
+  statsGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+    gap: "2rem",
+  },
+
+  statCard: {
+    background: theme.surface,
+    border: `1px solid ${theme.border}`,
+    borderRadius: "20px",
+    padding: "2.5rem",
+    textAlign: "center",
+    backdropFilter: "blur(20px)",
+  },
+
+  statIcon: {
+    fontSize: "2.5rem",
+    marginBottom: "1rem",
+  },
+
+  statValue: {
+    fontSize: "3rem",
+    fontWeight: 800,
+    background: theme.gradientNeon,
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    marginBottom: "0.5rem",
+  },
+
+  statLabel: {
+    fontSize: "1.1rem",
+    fontWeight: 600,
+    marginBottom: "0.5rem",
+  },
+
+  statDesc: {
+    fontSize: "0.9rem",
+    color: theme.textSecondary,
+  },
+
+  techGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+    gap: "1.25rem",
+    alignItems: "stretch",
+  },
+
+  techCard: {
+    background: "linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))",
+    border: `1px solid ${theme.border}`,
+    borderRadius: "14px",
+    padding: "1.5rem",
+    display: "flex",
+    gap: "1rem",
+    alignItems: "flex-start",
+    minHeight: "140px",
+  },
+
+  techIcon: {
+    fontSize: "2.4rem",
+    width: "56px",
+    height: "56px",
+    borderRadius: "12px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    background: "rgba(255,255,255,0.03)",
+    flexShrink: 0,
+  },
+
+  techName: {
+    fontSize: "1.05rem",
+    fontWeight: 700,
+    marginBottom: "0.25rem",
+    color: theme.textPrimary,
+  },
+
+  techCategory: {
+    display: "inline-block",
+    padding: "0.18rem 0.5rem",
+    borderRadius: "999px",
+    background: "rgba(56,189,248,0.08)",
+    color: theme.neonBlue,
+    fontSize: "0.75rem",
+    fontWeight: 700,
+    marginBottom: "0.6rem",
+  },
+
+  techDesc: {
+    fontSize: "0.9rem",
+    color: theme.textSecondary,
+    lineHeight: 1.4,
+  },
+
+  aboutContent: {
+    maxWidth: "900px",
+    margin: "0 auto 3rem",
+    textAlign: "center",
+  },
+
+  aboutContainer: {
+    background: theme.surface,
+    border: `1px solid ${theme.border}`,
+    padding: "2rem",
+    borderRadius: "16px",
+    backdropFilter: "blur(12px)",
+    boxShadow: "0 8px 30px rgba(2,6,23,0.45)",
+  },
+
+  aboutText: {
+    fontSize: "1.1rem",
+    color: theme.textSecondary,
+    lineHeight: 1.8,
+    marginBottom: "1.5rem",
+  },
+
+  testimonialsGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+    gap: "2rem",
+  },
+
+  testimonialCard: {
+    background: theme.surface,
+    border: `1px solid ${theme.border}`,
+    borderRadius: "20px",
+    padding: "2rem",
+    backdropFilter: "blur(20px)",
+    position: "relative",
+  },
+
+  quoteIcon: {
+    fontSize: "4rem",
+    color: theme.neonBlue,
+    opacity: 0.3,
+    position: "absolute",
+    top: "1rem",
+    right: "1.5rem",
+    fontFamily: "Georgia, serif",
+  },
+
+  testimonialText: {
+    fontSize: "1rem",
+    color: theme.textSecondary,
+    lineHeight: 1.7,
+    marginBottom: "1.5rem",
+    fontStyle: "italic",
+  },
+
+  testimonialAuthor: {
+    display: "flex",
+    gap: "1rem",
+    alignItems: "center",
+  },
+
+  authorAvatar: {
+    width: "50px",
+    height: "50px",
+    borderRadius: "50%",
+    background: theme.gradientNeon,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "1.5rem",
+  },
+
+  authorName: {
+    fontWeight: 600,
+    fontSize: "1rem",
+  },
+
+  authorRole: {
+    fontSize: "0.85rem",
+    color: theme.textSecondary,
   },
 };
 

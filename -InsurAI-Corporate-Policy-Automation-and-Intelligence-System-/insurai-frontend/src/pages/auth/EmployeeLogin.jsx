@@ -1,25 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
-
-/* ======================
-   DESIGN TOKENS
-====================== */
-const COLORS = {
-  primary: "#2563eb",
-  dark: "#020617",
-  accent: "#4ecdc4",
-  border: "#e5e7eb",
-  danger: "#dc3545",
-  light: "#f8fafc",
-};
 
 export default function EmployeeLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorEmail, setErrorEmail] = useState("");
-  const [errorPassword, setErrorPassword] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -33,12 +19,11 @@ export default function EmployeeLogin() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError("");
     setLoading(true);
-    setErrorEmail("");
-    setErrorPassword("");
 
     if (!validateEmail(email)) {
-      setErrorEmail("Please enter a valid email address");
+      setError("Please enter a valid email address");
       setLoading(false);
       return;
     }
@@ -59,12 +44,10 @@ export default function EmployeeLogin() {
 
       navigate("/employee/dashboard", { replace: true });
     } catch (err) {
-      if (err.response?.status === 404) {
-        setErrorEmail("User not found");
-      } else if (err.response?.status === 401) {
-        setErrorPassword("Incorrect password");
+      if (err.response?.status === 401) {
+        setError("Incorrect email or password");
       } else {
-        setErrorPassword("Login failed. Try again later.");
+        setError("Login failed. Please try again later.");
       }
     } finally {
       setLoading(false);
@@ -72,207 +55,478 @@ export default function EmployeeLogin() {
   };
 
   return (
-    <div
-  className="d-flex align-items-center justify-content-center"
-  style={{
-    minHeight: "100vh",
-    width: "100vw",
-    overflowX: "hidden",
-    background:
-      "radial-gradient(circle at top, #020617, #0f172a, #020617)",
-  }}
->
+    <div className="auth-root">
+      <div className="auth-card">
+        {/* BRAND */}
+        <h2 className="brand">
+          Insur<span>AI</span>
+        </h2>
 
-      <div
-        className="card border-0 shadow-lg"
-        style={{
-          maxWidth: "1000px",
-          width: "95%",
-          borderRadius: "22px",
-          overflow: "hidden",
-          background: "rgba(255,255,255,.88)",
-          backdropFilter: "blur(14px)",
-        }}
-      >
-        <div className="row g-0">
-          {/* LEFT PANEL */}
-          <div
-            className="col-md-6 d-none d-md-flex text-white"
-            style={{
-              background:
-                "linear-gradient(135deg, #020617, #1e3a8a, #0369a1)",
-            }}
-          >
-            <div className="p-5 d-flex flex-column justify-content-between">
-              <div>
-                <h2 className="fw-bold mb-3" style={{ fontSize: "2.6rem" }}>
-                  Smart Insurance <br />
-                  <span style={{ color: COLORS.accent }}>
-                    Powered by AI
-                  </span>
-                </h2>
-                <p style={{ opacity: 0.85 }}>
-                  Access analytics, claims, and real-time insights from
-                  your enterprise dashboard.
-                </p>
-              </div>
+        <h3 className="title">Employee Login</h3>
+        <p className="subtitle">
+          Secure access to enterprise insurance platform
+        </p>
 
-              <ul className="list-unstyled">
-                {[
-                  "AI Risk Prediction",
-                  "Secure JWT Access",
-                  "Enterprise-grade Dashboard",
-                ].map((item) => (
-                  <li key={item} className="mb-3 d-flex align-items-center">
-                    <span
-                      style={{
-                        width: 10,
-                        height: 10,
-                        background: COLORS.accent,
-                        borderRadius: "50%",
-                        marginRight: 12,
-                      }}
-                    />
-                    {item}
-                  </li>
-                ))}
-              </ul>
+        {error && <div className="alert">{error}</div>}
 
-              <small style={{ opacity: 0.7 }}>
-                Used by 10,000+ professionals worldwide
-              </small>
-            </div>
+        <form onSubmit={handleLogin}>
+          <input
+            className="auth-input"
+            placeholder="Email address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+
+          <div className="password-wrapper">
+            <input
+              type={showPassword ? "text" : "password"}
+              className="auth-input"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <span
+              className="eye"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? "🙈" : "👁"}
+            </span>
           </div>
 
-          {/* RIGHT PANEL */}
-          <div className="col-md-6">
-            <div className="p-4 p-md-5">
-              <div className="text-center mb-4">
-                <h3 className="fw-bold">Welcome Back</h3>
-                <p className="text-muted">
-                  Login to your InsurAI account
-                </p>
-              </div>
+          <button className="auth-btn" disabled={loading}>
+            {loading ? "Signing in..." : "Sign In"}
+          </button>
+        </form>
 
-              <form onSubmit={handleLogin}>
-                {/* EMAIL */}
-                <div className="form-floating mb-3">
-                  <input
-                    type="email"
-                    className={`form-control ${
-                      errorEmail ? "is-invalid" : ""
-                    }`}
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    style={{
-                      background: COLORS.light,
-                      borderRadius: "12px",
-                    }}
-                  />
-                  <label>Email address</label>
-                  {errorEmail && (
-                    <div className="invalid-feedback">
-                      {errorEmail}
-                    </div>
-                  )}
-                </div>
+        <Link to="/employee/forgot-password" className="back-link">
+          Forgot password?
+        </Link>
 
-                {/* PASSWORD */}
-                <div className="form-floating mb-4 position-relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    className={`form-control ${
-                      errorPassword ? "is-invalid" : ""
-                    }`}
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    style={{
-                      background: COLORS.light,
-                      borderRadius: "12px",
-                      paddingRight: "45px",
-                    }}
-                  />
-                  <label>Password</label>
+        <Link to="/employee/register" className="back-link">
+          Create new account
+        </Link>
 
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    style={{
-                      position: "absolute",
-                      top: "50%",
-                      right: 14,
-                      transform: "translateY(-50%)",
-                      border: "none",
-                      background: "none",
-                      opacity: 0.6,
-                    }}
-                  >
-                    {showPassword ? "🙈" : "👁️"}
-                  </button>
-
-                  {errorPassword && (
-                    <div className="invalid-feedback">
-                      {errorPassword}
-                    </div>
-                  )}
-                </div>
-
-                <div className="text-end mb-4">
-                  <button
-                    type="button"
-                    className="btn btn-link p-0"
-                    style={{ fontSize: "0.85rem" }}
-                    onClick={() =>
-                      navigate("/employee/forgot-password")
-                    }
-                  >
-                    Forgot Password?
-                  </button>
-                </div>
-
-                {/* BUTTON */}
-                <button
-                  type="submit"
-                  className="btn w-100 fw-semibold"
-                  disabled={loading}
-                  style={{
-                    borderRadius: "14px",
-                    padding: "14px",
-                    background:
-                      "linear-gradient(135deg, #2563eb, #0ea5e9)",
-                    color: "#fff",
-                    boxShadow:
-                      "0 12px 30px rgba(37,99,235,.35)",
-                  }}
-                >
-                  {loading ? "Signing In..." : "Sign In"}
-                </button>
-              </form>
-
-              <div className="text-center mt-4">
-                <small className="text-muted">
-                  Don’t have an account?
-                </small>
-                <br />
-                <Link to="/employee/register" className="fw-semibold">
-                  Create New Account
-                </Link>
-              </div>
-
-              <div className="text-center mt-4">
-                <small className="text-muted">
-                  🔒 Secure JWT Authentication
-                </small>
-              </div>
-            </div>
-          </div>
+        <div className="footer">
+          🔐 Enterprise-grade security • JWT Protected
         </div>
       </div>
+
+      {/* ================= STYLES ================= */}
+      <style>{`
+        .auth-root {
+          min-height: 100vh;
+          width: 100vw;
+          display: grid;
+          place-items: center;
+          background: radial-gradient(circle at top, #020617, #020617, #000);
+          font-family: 'Segoe UI', sans-serif;
+        }
+
+        .auth-card {
+          width: 100%;
+          max-width: 420px;
+          min-height: 520px;          /* 👈 HEIGHT INCREASED */
+          padding: 50px 36px;         /* 👈 MORE VERTICAL SPACE */
+          border-radius: 22px;
+          background: rgba(15, 23, 42, 0.85);
+          backdrop-filter: blur(18px);
+          box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+          color: white;
+          text-align: center;
+
+          display: flex;              /* 👇 content nicely centered */
+          flex-direction: column;
+          justify-content: center;
+        }
+
+
+        .brand {
+          font-size: 28px;
+          font-weight: 800;
+          margin-bottom: 10px;
+        }
+
+        .brand span {
+          color: #a855f7;
+        }
+
+        .title {
+          font-size: 22px;
+          font-weight: 700;
+          margin-bottom: 6px;
+        }
+
+        .subtitle {
+          font-size: 14px;
+          opacity: 0.7;
+          margin-bottom: 26px;
+        }
+
+        .auth-input {
+          width: 100%;
+          padding: 14px 16px;
+          margin-bottom: 14px;
+          border-radius: 12px;
+          border: 1px solid rgba(255,255,255,0.1);
+          background: rgba(2,6,23,0.9);
+          color: white;
+          outline: none;
+        }
+
+        .auth-input::placeholder {
+          color: rgba(255,255,255,0.5);
+        }
+
+        .auth-input:focus {
+          border-color: #a855f7;
+          box-shadow: 0 0 0 2px rgba(168,85,247,0.3);
+        }
+
+        .password-wrapper {
+          position: relative;
+        }
+
+        .eye {
+          position: absolute;
+          right: 14px;
+          top: 50%;
+          transform: translateY(-50%);
+          cursor: pointer;
+          opacity: 0.7;
+        }
+
+        .auth-btn {
+          width: 100%;
+          padding: 14px;
+          border-radius: 14px;
+          border: none;
+          font-weight: 600;
+          margin-top: 10px;
+          background: linear-gradient(135deg, #9333ea, #3b82f6);
+          color: white;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .auth-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 30px rgba(147,51,234,0.4);
+        }
+
+        .back-link {
+          display: block;
+          margin-top: 14px;
+          font-size: 14px;
+          color: #38bdf8;
+          text-decoration: none;
+        }
+
+        .footer {
+          margin-top: 26px;
+          font-size: 12px;
+          opacity: 0.6;
+        }
+
+        .alert {
+          background: rgba(220,38,38,0.15);
+          border: 1px solid rgba(220,38,38,0.4);
+          padding: 10px;
+          border-radius: 10px;
+          margin-bottom: 14px;
+          font-size: 14px;
+        }
+
+        @media (max-width: 480px) {
+          .auth-card {
+            padding: 30px 22px;
+          }
+        }
+      `}</style>
     </div>
   );
 }
+
+
+
+
+
+
+
+// import React, { useState } from "react";
+// import { useNavigate, Link } from "react-router-dom";
+// import "bootstrap/dist/css/bootstrap.min.css";
+// import axios from "axios";
+
+// /* ======================
+//    DESIGN TOKENS
+// ====================== */
+// const COLORS = {
+//   primary: "#2563eb",
+//   dark: "#020617",
+//   accent: "#4ecdc4",
+//   border: "#e5e7eb",
+//   danger: "#dc3545",
+//   light: "#f8fafc",
+// };
+
+// export default function EmployeeLogin() {
+//   const [email, setEmail] = useState("");
+//   const [password, setPassword] = useState("");
+//   const [errorEmail, setErrorEmail] = useState("");
+//   const [errorPassword, setErrorPassword] = useState("");
+//   const [loading, setLoading] = useState(false);
+//   const [showPassword, setShowPassword] = useState(false);
+
+//   const navigate = useNavigate();
+
+//   const validateEmail = (email) => {
+//     const re =
+//       /^[a-zA-Z0-9._%+-]+@[a-zA-Z][a-zA-Z0-9-]*(\.[a-zA-Z]{2,})+$/;
+//     return re.test(email);
+//   };
+
+//   const handleLogin = async (e) => {
+//     e.preventDefault();
+//     setLoading(true);
+//     setErrorEmail("");
+//     setErrorPassword("");
+
+//     if (!validateEmail(email)) {
+//       setErrorEmail("Please enter a valid email address");
+//       setLoading(false);
+//       return;
+//     }
+
+//     try {
+//       const res = await axios.post("http://localhost:8080/auth/login", {
+//         email: email.trim().toLowerCase(),
+//         password,
+//       });
+
+//       const data = res.data;
+
+//       localStorage.setItem("token", data.token);
+//       localStorage.setItem("role", data.role?.toLowerCase() || "employee");
+//       localStorage.setItem("name", data.name || "");
+//       localStorage.setItem("employeeId", data.employeeId || "");
+//       localStorage.setItem("id", data.id || "");
+
+//       navigate("/employee/dashboard", { replace: true });
+//     } catch (err) {
+//       if (err.response?.status === 404) {
+//         setErrorEmail("User not found");
+//       } else if (err.response?.status === 401) {
+//         setErrorPassword("Incorrect password");
+//       } else {
+//         setErrorPassword("Login failed. Try again later.");
+//       }
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <div
+//   className="d-flex align-items-center justify-content-center"
+//   style={{
+//     minHeight: "100vh",
+//     width: "100vw",
+//     overflowX: "hidden",
+//     background:
+//       "radial-gradient(circle at top, #020617, #0f172a, #020617)",
+//   }}
+// >
+
+//       <div
+//         className="card border-0 shadow-lg"
+//         style={{
+//           maxWidth: "1000px",
+//           width: "95%",
+//           borderRadius: "22px",
+//           overflow: "hidden",
+//           background: "rgba(255,255,255,.88)",
+//           backdropFilter: "blur(14px)",
+//         }}
+//       >
+//         <div className="row g-0">
+//           {/* LEFT PANEL */}
+//           <div
+//             className="col-md-6 d-none d-md-flex text-white"
+//             style={{
+//               background:
+//                 "linear-gradient(135deg, #020617, #1e3a8a, #0369a1)",
+//             }}
+//           >
+//             <div className="p-5 d-flex flex-column justify-content-between">
+//               <div>
+//                 <h2 className="fw-bold mb-3" style={{ fontSize: "2.6rem" }}>
+//                   Smart Insurance <br />
+//                   <span style={{ color: COLORS.accent }}>
+//                     Powered by AI
+//                   </span>
+//                 </h2>
+//                 <p style={{ opacity: 0.85 }}>
+//                   Access analytics, claims, and real-time insights from
+//                   your enterprise dashboard.
+//                 </p>
+//               </div>
+
+//               <ul className="list-unstyled">
+//                 {[
+//                   "AI Risk Prediction",
+//                   "Secure JWT Access",
+//                   "Enterprise-grade Dashboard",
+//                 ].map((item) => (
+//                   <li key={item} className="mb-3 d-flex align-items-center">
+//                     <span
+//                       style={{
+//                         width: 10,
+//                         height: 10,
+//                         background: COLORS.accent,
+//                         borderRadius: "50%",
+//                         marginRight: 12,
+//                       }}
+//                     />
+//                     {item}
+//                   </li>
+//                 ))}
+//               </ul>
+
+//               <small style={{ opacity: 0.7 }}>
+//                 Used by 10,000+ professionals worldwide
+//               </small>
+//             </div>
+//           </div>
+
+//           {/* RIGHT PANEL */}
+//           <div className="col-md-6">
+//             <div className="p-4 p-md-5">
+//               <div className="text-center mb-4">
+//                 <h3 className="fw-bold">Welcome Back</h3>
+//                 <p className="text-muted">
+//                   Login to your InsurAI account
+//                 </p>
+//               </div>
+
+//               <form onSubmit={handleLogin}>
+//                 {/* EMAIL */}
+//                 <div className="form-floating mb-3">
+//                   <input
+//                     type="email"
+//                     className={`form-control ${
+//                       errorEmail ? "is-invalid" : ""
+//                     }`}
+//                     placeholder="Email"
+//                     value={email}
+//                     onChange={(e) => setEmail(e.target.value)}
+//                     style={{
+//                       background: COLORS.light,
+//                       borderRadius: "12px",
+//                     }}
+//                   />
+//                   <label>Email address</label>
+//                   {errorEmail && (
+//                     <div className="invalid-feedback">
+//                       {errorEmail}
+//                     </div>
+//                   )}
+//                 </div>
+
+//                 {/* PASSWORD */}
+//                 <div className="form-floating mb-4 position-relative">
+//                   <input
+//                     type={showPassword ? "text" : "password"}
+//                     className={`form-control ${
+//                       errorPassword ? "is-invalid" : ""
+//                     }`}
+//                     placeholder="Password"
+//                     value={password}
+//                     onChange={(e) => setPassword(e.target.value)}
+//                     style={{
+//                       background: COLORS.light,
+//                       borderRadius: "12px",
+//                       paddingRight: "45px",
+//                     }}
+//                   />
+//                   <label>Password</label>
+
+//                   <button
+//                     type="button"
+//                     onClick={() => setShowPassword(!showPassword)}
+//                     style={{
+//                       position: "absolute",
+//                       top: "50%",
+//                       right: 14,
+//                       transform: "translateY(-50%)",
+//                       border: "none",
+//                       background: "none",
+//                       opacity: 0.6,
+//                     }}
+//                   >
+//                     {showPassword ? "🙈" : "👁️"}
+//                   </button>
+
+//                   {errorPassword && (
+//                     <div className="invalid-feedback">
+//                       {errorPassword}
+//                     </div>
+//                   )}
+//                 </div>
+
+//                 <div className="text-end mb-4">
+//                   <button
+//                     type="button"
+//                     className="btn btn-link p-0"
+//                     style={{ fontSize: "0.85rem" }}
+//                     onClick={() =>
+//                       navigate("/employee/forgot-password")
+//                     }
+//                   >
+//                     Forgot Password?
+//                   </button>
+//                 </div>
+
+//                 {/* BUTTON */}
+//                 <button
+//                   type="submit"
+//                   className="btn w-100 fw-semibold"
+//                   disabled={loading}
+//                   style={{
+//                     borderRadius: "14px",
+//                     padding: "14px",
+//                     background:
+//                       "linear-gradient(135deg, #2563eb, #0ea5e9)",
+//                     color: "#fff",
+//                     boxShadow:
+//                       "0 12px 30px rgba(37,99,235,.35)",
+//                   }}
+//                 >
+//                   {loading ? "Signing In..." : "Sign In"}
+//                 </button>
+//               </form>
+
+//               <div className="text-center mt-4">
+//                 <small className="text-muted">
+//                   Don’t have an account?
+//                 </small>
+//                 <br />
+//                 <Link to="/employee/register" className="fw-semibold">
+//                   Create New Account
+//                 </Link>
+//               </div>
+
+//               <div className="text-center mt-4">
+//                 <small className="text-muted">
+//                   🔒 Secure JWT Authentication
+//                 </small>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
 
 
 

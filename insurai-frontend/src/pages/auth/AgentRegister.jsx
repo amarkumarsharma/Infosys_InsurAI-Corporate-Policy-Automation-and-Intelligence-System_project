@@ -90,13 +90,13 @@ export default function AgentRegister({ onBack }) {
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h4 className="fw-bold text-gray-800 mb-1">
-            <i className="bi bi-person-plus me-2 text-primary-lavender"></i>
+            <i className="bi bi-person-plus me-2 text-primary"></i>
             Register Insurance Agent
           </h4>
           <p className="text-gray-600 mb-0">Create a new agent account for the system</p>
         </div>
         <div className="text-end">
-          <div className="badge bg-primary-lavender">
+          <div className="badge bg-primary">
             <i className="bi bi-shield-check me-1"></i>
             Admin Access
           </div>
@@ -107,7 +107,7 @@ export default function AgentRegister({ onBack }) {
       <div className="card shadow-sm border-0">
         <div className="card-header bg-white py-4 border-0">
           <div className="text-center">
-            <div className="bg-primary-lavender rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+            <div className="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
                  style={{ width: "70px", height: "70px" }}>
               <i className="bi bi-headset text-white fs-3"></i>
             </div>
@@ -140,7 +140,7 @@ export default function AgentRegister({ onBack }) {
             {/* Full Name Field */}
             <div className="mb-4">
               <label className="form-label fw-semibold text-gray-700 mb-3">
-                <i className="bi bi-person me-2 text-primary-lavender"></i> 
+                <i className="bi bi-person me-2 text-primary"></i> 
                 Full Name
               </label>
               <div className="input-group input-group-lg">
@@ -161,7 +161,7 @@ export default function AgentRegister({ onBack }) {
             {/* Email Field */}
             <div className="mb-4">
               <label className="form-label fw-semibold text-gray-700 mb-3">
-                <i className="bi bi-envelope me-2 text-primary-lavender"></i> 
+                <i className="bi bi-envelope me-2 text-primary"></i> 
                 Email Address
               </label>
               <div className="input-group input-group-lg">
@@ -186,7 +186,7 @@ export default function AgentRegister({ onBack }) {
             {/* Password Field */}
             <div className="mb-4">
               <label className="form-label fw-semibold text-gray-700 mb-3">
-                <i className="bi bi-lock me-2 text-primary-lavender"></i> 
+                <i className="bi bi-lock me-2 text-primary"></i> 
                 Password
               </label>
               <div className="input-group input-group-lg">
@@ -271,7 +271,7 @@ export default function AgentRegister({ onBack }) {
             <div className="d-flex gap-3 mt-4 pt-3">
               <button
                 type="submit"
-                className="btn btn-primary-lavender flex-fill fw-semibold py-3 rounded-2 shadow-sm"
+                className="btn btn-primary flex-fill fw-semibold py-3 rounded-2 shadow-sm"
                 disabled={loading}
               >
                 {loading ? (
@@ -331,51 +331,6 @@ export default function AgentRegister({ onBack }) {
         .card:hover {
           transform: translateY(-2px);
           box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
-        }
-
-        /* Lavender-Indigo Theme Colors */
-        .text-primary-lavender {
-          color: #6366f1 !important;
-        }
-
-        .bg-primary-lavender {
-          background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%) !important;
-        }
-
-        .badge.bg-primary-lavender {
-          background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%) !important;
-        }
-
-        .btn-primary-lavender {
-          background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%);
-          border: none;
-          color: white;
-          transition: all 0.3s ease;
-        }
-
-        .btn-primary-lavender:hover {
-          background: linear-gradient(135deg, #3b1470 0%, #4f46e5 100%);
-          transform: translateY(-2px);
-          box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
-        }
-
-        .btn-primary-lavender:disabled {
-          background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%);
-          opacity: 0.6;
-        }
-
-        .form-control:focus {
-          border-color: #6366f1;
-          box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
-        }
-
-        .input-group-text {
-          transition: all 0.3s ease;
-        }
-
-        .form-control:focus + .input-group-text,
-        .input-group .form-control:focus ~ .input-group-text {
-          border-color: #6366f1;
         }
       `}</style>
     </div>

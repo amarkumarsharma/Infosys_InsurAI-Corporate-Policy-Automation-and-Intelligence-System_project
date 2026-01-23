@@ -24,87 +24,83 @@ export default function AgentDashboard() {
 
   // -------------------- Get agent info, availability, and queries --------------------
   useEffect(() => {
-  const token = localStorage.getItem("token");
-  const role = localStorage.getItem("role");
-  const storedAgentId = localStorage.getItem("agentId");
-  const storedAgentName = localStorage.getItem("agentName");
+    const storedAgentId = localStorage.getItem("agentId");
+    const storedAgentName = localStorage.getItem("agentName");
+    const token = localStorage.getItem("token");
 
-  if (!token) {
-    navigate("/agent/login");
-    return;
-  }
+    if (!token) {
+      alert("No token found, please login again");
+      navigate("/agent/login");
+      return;
+    }
 
-  if (role !== "AGENT") {
-    navigate("/");
-    return;
-  }
+    if (storedAgentId && storedAgentName) {
+      const id = parseInt(storedAgentId);
+      setAgentId(id);
+      setAgentName(storedAgentName);
 
-  if (!storedAgentId || !storedAgentName) {
-    navigate("/agent/login");
-    return;
-  }
+      const axiosConfig = { headers: { Authorization: `Bearer ${token}` } };
 
-  const id = parseInt(storedAgentId);
-  setAgentId(id);
-  setAgentName(storedAgentName);
-
-  const axiosConfig = {
-    headers: { Authorization: `Bearer ${token}` }
-  };
-
-  // 🔥 THIS WAS MISSING – fetch availability
-  axios.get(`http://localhost:8080/agent/${id}/availability`, axiosConfig)
-    .then(res => {
-      if (res.data && typeof res.data.available === "boolean") {
-        setAvailability(res.data.available);
-      }
-    })
-    .catch(() => setAvailability(false));
-
-  // Fetch employees
-  let employeeMap = {};
-  axios.get("http://localhost:8080/auth/employees", axiosConfig)
-    .then(empRes => {
-      empRes.data.forEach(emp => {
-        employeeMap[emp.id] = emp.name;
-      });
-
-      // Fetch queries
-      axios.get(`http://localhost:8080/agent/queries/all/${id}`, axiosConfig)
+      // Fetch availability
+      axios.get(`http://localhost:8080/agent/${id}/availability`, axiosConfig)
         .then(res => {
-          const allQueries = res.data.map(q => ({
-            id: q.id,
-            employeeId: q.employeeId,
-            employee: q.employee ? q.employee.name : employeeMap[q.employeeId],
-            query: q.queryText,
-            policyName: q.policyName || "-",
-            claimType: q.claimType || "-",
-            createdAt: q.createdAt,
-            updatedAt: q.updatedAt,
-            status: q.status === "Resolved" ? "Resolved" : "Pending",
-            response: q.response || "",
-            agentId: q.agentId
-          }));
+          if (res.data && typeof res.data.available === "boolean") {
+            setAvailability(res.data.available);
+          }
+        })
+        .catch(err => console.error("Failed to fetch availability", err));
 
-          setEmployeeQueries(allQueries);
+      // Fetch all employees once
+      let employeeMap = {};
+      axios.get("http://localhost:8080/auth/employees", axiosConfig)
+        .then(empRes => {
+          empRes.data.forEach(emp => {
+            employeeMap[emp.id] = emp.name;
+          });
 
-          const resolvedClaims = allQueries
-            .filter(q => q.status === "Resolved")
-            .map(q => ({
-              id: q.id,
-              employee: q.employee,
-              type: q.claimType || "-",
-              policyName: q.policyName || "-",
-              date: q.updatedAt,
-              status: "Approved"
-            }));
+          // Fetch all queries
+          axios.get(`http://localhost:8080/agent/queries/all/${id}`, axiosConfig)
+            .then(res => {
+              if (res.data) {
+                const allQueries = res.data.map(q => ({
+                  id: q.id,
+                  employeeId: q.employeeId,
+                  employee: q.employee ? q.employee.name : employeeMap[q.employeeId] || `Employee ${q.employeeId}`,
+                  query: q.queryText,
+                  policyName: q.policyName || "-",
+                  claimType: q.claimType || "-",
+                  createdAt: q.createdAt,
+                  updatedAt: q.updatedAt,
+                  status: q.status === "resolved" ? "Resolved" : "Pending",
+                  response: q.response || "",
+                  agentId: q.agentId,
+                  allowEdit: q.status === "pending"
+                }));
 
-          setAssistedClaims(resolvedClaims);
-        });
-    });
+                setEmployeeQueries(allQueries);
 
-}, [navigate]);
+                // Derive assisted claims automatically
+                const resolvedClaims = allQueries
+                  .filter(q => q.status === "Resolved")
+                  .map(q => ({
+                    id: q.id,
+                    employee: q.employee,
+                    type: q.claimType || "-",
+                    policyName: q.policyName || "-",
+                    date: q.updatedAt ? new Date(q.updatedAt).toLocaleString() : "-",
+                    status: "Approved"
+                  }));
 
+                setAssistedClaims(resolvedClaims);
+              }
+            })
+            .catch(err => console.error("Failed to fetch queries", err));
+        })
+        .catch(err => console.error("Failed to fetch employees", err));
+    } else {
+      navigate("/agent/login");
+    }
+  }, [navigate]);
 
   const handleLogout = () => {
     localStorage.clear();
@@ -113,74 +109,64 @@ export default function AgentDashboard() {
 
   // -------------------- Toggle availability --------------------
   const toggleAvailability = async () => {
-  try {
-    const newStatus = !availability;
-    const token = localStorage.getItem("token");
-    if (!token) return alert("No token found, please login again");
+    try {
+      const newStatus = !availability;
+      const token = localStorage.getItem("token");
+      if (!token) return alert("No token found, please login again");
 
-    const axiosConfig = {
-      headers: { Authorization: `Bearer ${token}` }
-    };
+      const axiosConfig = { headers: { Authorization: `Bearer ${token}` } };
 
-    await axios.post(
-      "http://localhost:8080/agent/availability",
-      {
+      await axios.post("http://localhost:8080/agent/availability", {
+        agentId,
         available: newStatus,
         startTime: new Date().toISOString(),
         endTime: null
-      },
-      axiosConfig
-    );
+      }, axiosConfig);
 
-    // ✅ Update UI from frontend state
-    setAvailability(newStatus);
+      const res = await axios.get(`http://localhost:8080/agent/${agentId}/availability`, axiosConfig);
+      if (res.data) setAvailability(res.data.available);
 
-    alert(`You are now ${newStatus ? "available" : "unavailable"} for queries`);
-  } catch (error) {
-    console.error("Error updating availability:", error);
-    alert("Failed to update availability");
-  }
-};
+      alert(`You are now ${newStatus ? "available" : "unavailable"} for queries`);
+    } catch (error) {
+      console.error("Error updating availability:", error);
+      alert("Failed to update availability");
+    }
+  };
 
   // -------------------- Schedule future availability --------------------
   const scheduleFutureAvailability = async () => {
-  if (!futureFrom || !futureTo) {
-    alert("Please select both start and end time.");
-    return;
-  }
+    if (!futureFrom || !futureTo) {
+      alert("Please select both start and end time.");
+      return;
+    }
 
-  try {
-    const token = localStorage.getItem("token");
-    if (!token) return alert("No token found, please login again");
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return alert("No token found, please login again");
 
-    const axiosConfig = {
-      headers: { Authorization: `Bearer ${token}` }
-    };
+      const axiosConfig = { headers: { Authorization: `Bearer ${token}` } };
 
-    const startISO = new Date(futureFrom).toISOString();
-    const endISO = new Date(futureTo).toISOString();
+      const startISO = new Date(futureFrom).toISOString();
+      const endISO = new Date(futureTo).toISOString();
 
-    await axios.post(
-      "http://localhost:8080/agent/availability",
-      {
+      await axios.post("http://localhost:8080/agent/availability", {
+        agentId,
         available: true,
         startTime: startISO,
         endTime: endISO
-      },
-      axiosConfig
-    );
+      }, axiosConfig);
 
-    // Assume success
-    setAvailability(true);
+      const res = await axios.get(`http://localhost:8080/agent/${agentId}/availability`, axiosConfig);
+      if (res.data) setAvailability(res.data.available);
 
-    alert("Future availability scheduled successfully!");
-    setFutureFrom("");
-    setFutureTo("");
-  } catch (error) {
-    console.error("Error scheduling availability:", error);
-    alert("Failed to schedule availability.");
-  }
-};
+      alert("Future availability scheduled successfully!");
+      setFutureFrom("");
+      setFutureTo("");
+    } catch (error) {
+      console.error("Error scheduling availability:", error);
+      alert("Failed to schedule availability.");
+    }
+  };
 
   // -------------------- Respond to a query --------------------
   const respondToQuery = async (id, responseText, isUpdate = false) => {
@@ -515,17 +501,15 @@ export default function AgentDashboard() {
       case "queries":
         return (
           <AgentQueries
-  availability={availability}
-  toggleAvailability={toggleAvailability}
-  filter={filter}
-  setFilter={setFilter}
-  employeeQueries={employeeQueries}
-  handleResponseChange={handleResponseChange}
-  respondToQuery={respondToQuery}
-  axios={axios}
-  setEmployeeQueries={setEmployeeQueries}
-/>
-
+            availability={availability}
+            filter={filter}
+            setFilter={setFilter}
+            employeeQueries={employeeQueries}
+            handleResponseChange={handleResponseChange}
+            respondToQuery={respondToQuery}
+            axios={axios}
+            setEmployeeQueries={setEmployeeQueries}
+          />
         );
 
       case "claims":
@@ -658,223 +642,222 @@ export default function AgentDashboard() {
 
       {/* Global Styles */}
       <style>{`
-  .enterprise-dashboard {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
+        .enterprise-dashboard {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-  /* Header Gradient - Lavender to Indigo */
-  .agent-dashboard .dashboard-header {
-    background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%);
-  }
+        /* Header Gradient */
+        .agent-dashboard .dashboard-header {
+          background: linear-gradient(135deg, #010f0cff 0%, #087f5b 100%);
+        }
 
-  /* Sidebar */
-  .dashboard-sidebar {
-    width: 250px;
-    min-height: 100vh;
-    background: #f8f9fa;
-    transition: all 0.3s ease;
-  }
+        /* Sidebar */
+        .dashboard-sidebar {
+          width: 250px;
+          min-height: 100vh;
+          background: #f8f9fa;
+          transition: all 0.3s ease;
+        }
 
-  .sidebar-link {
-    border-radius: 8px;
-    margin-bottom: 5px;
-    padding: 12px 15px;
-    display: flex;
-    align-items: center;
-    color: #495057;
-    transition: all 0.3s ease;
-  }
+        .sidebar-link {
+          border-radius: 8px;
+          margin-bottom: 5px;
+          padding: 12px 15px;
+          display: flex;
+          align-items: center;
+          color: #495057;
+          transition: all 0.3s ease;
+        }
 
-  .sidebar-link:hover {
-    background-color: #ffffff;
-    color: #6366f1;
-    transform: translateX(5px);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  }
+        .sidebar-link:hover {
+          background-color: #ffffff;
+          color: #087f5b;
+          transform: translateX(5px);
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
 
-  .sidebar-link.active {
-    background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%);
-    color: white;
-    font-weight: 600;
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
-  }
+        .sidebar-link.active {
+          background: linear-gradient(135deg, #010f0cff 0%, #087f5b 100%);
+          color: white;
+          font-weight: 600;
+          box-shadow: 0 4px 15px rgba(8, 127, 91, 0.3);
+        }
 
-  .sidebar-footer {
-    color: #495057;
-  }
+        .sidebar-footer {
+          color: #495057;
+        }
 
-  /* Enhanced Cards with Theme Colors */
-  .metric-card {
-    transition: all 0.3s ease;
-    border: none;
-  }
+        /* Enhanced Cards with Theme Colors */
+        .metric-card {
+          transition: all 0.3s ease;
+          border: none;
+        }
 
-  .metric-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-  }
+        .metric-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
 
-  /* Progress Bars with Theme Colors */
-  .progress {
-    background-color: #e9ecef;
-    border-radius: 10px;
-  }
+        /* Progress Bars with Theme Colors */
+        .progress {
+          background-color: #e9ecef;
+          border-radius: 10px;
+        }
 
-  .progress-bar {
-    border-radius: 10px;
-  }
+        .progress-bar {
+          border-radius: 10px;
+        }
 
-  .bg-primary {
-    background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%) !important;
-  }
+        .bg-primary {
+          background: linear-gradient(135deg, #010f0cff 0%, #087f5b 100%) !important;
+        }
 
-  /* Buttons with Theme Colors */
-  .btn-primary {
-    background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%);
-    border: none;
-  }
+        /* Buttons with Theme Colors */
+        .btn-primary {
+          background: linear-gradient(135deg, #010f0cff 0%, #087f5b 100%);
+          border: none;
+        }
 
-  .btn-primary:hover {
-    background: linear-gradient(135deg, #3b1470 0%, #4f46e5 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
-  }
+        .btn-primary:hover {
+          background: linear-gradient(135deg, #000a08 0%, #066649 100%);
+          transform: translateY(-2px);
+          box-shadow: 0 4px 15px rgba(8, 127, 91, 0.4);
+        }
 
-  .btn-outline-primary {
-    color: #6366f1;
-    border-color: #6366f1;
-  }
+        .btn-outline-primary {
+          color: #087f5b;
+          border-color: #087f5b;
+        }
 
-  .btn-outline-primary:hover {
-    background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%);
-    border-color: #6366f1;
-    color: white;
-    transform: translateY(-2px);
-  }
+        .btn-outline-primary:hover {
+          background: linear-gradient(135deg, #010f0cff 0%, #087f5b 100%);
+          border-color: #087f5b;
+          transform: translateY(-2px);
+        }
 
-  /* Badges */
-  .badge {
-    font-size: 0.7em;
-  }
+        /* Badges */
+        .badge {
+          font-size: 0.7em;
+        }
 
-  /* Charts and Graphs */
-  .chart-container {
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  }
+        /* Charts and Graphs */
+        .chart-container {
+          background: white;
+          border-radius: 10px;
+          padding: 20px;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
 
-  /* Table Styling */
-  .table-theme {
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  }
+        /* Table Styling */
+        .table-theme {
+          background: white;
+          border-radius: 10px;
+          overflow: hidden;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
 
-  .table-theme thead {
-    background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%);
-    color: white;
-  }
+        .table-theme thead {
+          background: linear-gradient(135deg, #010f0cff 0%, #087f5b 100%);
+          color: white;
+        }
 
-  .table-theme th {
-    border: none;
-    padding: 15px;
-    font-weight: 600;
-  }
+        .table-theme th {
+          border: none;
+          padding: 15px;
+          font-weight: 600;
+        }
 
-  .table-theme td {
-    padding: 12px 15px;
-    border-color: #dee2e6;
-  }
+        .table-theme td {
+          padding: 12px 15px;
+          border-color: #dee2e6;
+        }
 
-  /* Form Controls */
-  .form-control:focus {
-    border-color: #6366f1;
-    box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
-  }
+        /* Form Controls */
+        .form-control:focus {
+          border-color: #087f5b;
+          box-shadow: 0 0 0 0.2rem rgba(8, 127, 91, 0.25);
+        }
 
-  /* Alert Styling */
-  .alert-success {
-    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-    border: 1px solid #28a745;
-    color: #155724;
-  }
+        /* Alert Styling */
+        .alert-success {
+          background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+          border: 1px solid #28a745;
+          color: #155724;
+        }
 
-  /* Mobile Responsive */
-  @media (max-width: 768px) {
-    .dashboard-sidebar {
-      position: fixed;
-      top: 76px;
-      left: -280px;
-      height: calc(100vh - 76px);
-      z-index: 1000;
-      transition: left 0.3s ease;
-    }
-    .dashboard-sidebar.show {
-      left: 0;
-    }
-    
-    .metric-card {
-      margin-bottom: 15px;
-    }
-    
-    .dashboard-content-wrapper {
-      padding: 15px;
-    }
-  }
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+          .dashboard-sidebar {
+            position: fixed;
+            top: 76px;
+            left: -280px;
+            height: calc(100vh - 76px);
+            z-index: 1000;
+            transition: left 0.3s ease;
+          }
+          .dashboard-sidebar.show {
+            left: 0;
+          }
+          
+          .metric-card {
+            margin-bottom: 15px;
+          }
+          
+          .dashboard-content-wrapper {
+            padding: 15px;
+          }
+        }
 
-  /* Animation for smooth transitions */
-  .fade-in {
-    animation: fadeIn 0.5s ease-in;
-  }
+        /* Animation for smooth transitions */
+        .fade-in {
+          animation: fadeIn 0.5s ease-in;
+        }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
 
-  /* Text gradient for headers */
-  .text-gradient {
-    background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+        /* Text gradient for headers */
+        .text-gradient {
+          background: linear-gradient(135deg, #010f0cff 0%, #087f5b 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
 
-  /* Activity Timeline */
-  .activity-indicator {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-right: 15px;
-  }
+        /* Activity Timeline */
+        .activity-indicator {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          margin-right: 15px;
+        }
 
-  .indicator-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    z-index: 2;
-  }
+        .indicator-dot {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          z-index: 2;
+        }
 
-  .indicator-line {
-    width: 2px;
-    height: 100%;
-    background-color: #e9ecef;
-    position: absolute;
-    top: 12px;
-  }
+        .indicator-line {
+          width: 2px;
+          height: 100%;
+          background-color: #e9ecef;
+          position: absolute;
+          top: 12px;
+        }
 
-  .shadow-hover {
-    transition: all 0.3s ease;
-  }
+        .shadow-hover {
+          transition: all 0.3s ease;
+        }
 
-  .shadow-hover:hover {
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  }
-`}</style>
+        .shadow-hover:hover {
+          box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+      `}</style>
     </div>
   );
 }

@@ -1,16 +1,15 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate, Link } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function AgentLogin() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorEmail, setErrorEmail] = useState("");
   const [errorPassword, setErrorPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
-
 
   const validateEmail = (email) => {
     const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z][a-zA-Z0-9-]*(\.[a-zA-Z]{2,})+$/;
@@ -43,18 +42,13 @@ export default function AgentLogin() {
         const data = await response.json();
         console.log("Login successful:", data);
 
-        // Store JWT token and agent details (Note: localStorage not available in artifacts)
-        console.log("Token:", data.token);
-        console.log("Role: AGENT");
-        console.log("Agent ID:", data.agentId);
-        console.log("Agent Name:", data.name);
-        localStorage.setItem("token", data.token);
+        // Store JWT token and agent details
+        localStorage.setItem("token", data.token || "");
+        localStorage.setItem("role", "AGENT");
         localStorage.setItem("agentId", data.agentId);
         localStorage.setItem("agentName", data.name);
-        localStorage.setItem("email", data.email);
-        localStorage.setItem("role", "agent");
-        
-         // REDIRECT
+
+        console.log("Token stored in localStorage:", data.token);
         navigate("/agent/dashboard");
       } else {
         const text = await response.text();
@@ -85,44 +79,40 @@ export default function AgentLogin() {
 
   return (
     <div
+      className="d-flex justify-content-center align-items-center"
       style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
         minHeight: "100vh",
         width: "100vw",
-        background: "linear-gradient(135deg, #2d1b4e 0%, #6366f1 100%)",
+        background: "linear-gradient(135deg, #010f0c 0%, #087f5b 100%)",
         padding: "0",
         margin: "0",
         fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
       }}
     >
       <div
+        className="card shadow-lg border-0"
         style={{
           maxWidth: "1000px",
           width: "95%",
           borderRadius: "20px",
           overflow: "hidden",
           background: "rgba(255, 255, 255, 0.95)",
-          boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
         }}
       >
-        <div style={{ display: "flex", flexWrap: "wrap" }}>
+        <div className="row g-0">
           {/* Left Side - Branding & Content */}
           <div 
+            className="col-md-6 d-none d-md-flex"
             style={{
-              flex: "1 1 50%",
-              background: "linear-gradient(135deg, #2d1b4e 0%, #6366f1 100%)",
+              background: "linear-gradient(135deg, #010f0c 0%, #087f5b 100%)",
               position: "relative",
               overflow: "hidden",
-              minHeight: "600px",
-              display: "flex",
             }}
           >
-            <div style={{ padding: "3rem", display: "flex", flexDirection: "column", justifyContent: "space-between", color: "white", width: "100%" }}>
+            <div className="p-5 d-flex flex-column justify-content-between text-white">
               {/* Header */}
               <div>
-                <div style={{ display: "flex", alignItems: "center", marginBottom: "1.5rem" }}>
+                <div className="d-flex align-items-center mb-4">
                   <div
                     style={{
                       width: "50px",
@@ -150,26 +140,26 @@ export default function AgentLogin() {
                       <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                     </svg>
                   </div>
-                  <h4 style={{ fontWeight: "bold", margin: "0 0 0 1rem" }}>InsurAI Agents</h4>
+                  <h4 className="fw-bold mb-0 ms-3">InsurAI Agents</h4>
                 </div>
 
-                <h2 style={{ fontWeight: "bold", marginBottom: "1rem", fontSize: "2.2rem", lineHeight: "1.2" }}>
+                <h2 className="fw-bold mb-3" style={{ fontSize: "2.2rem" }}>
                   Agent <br />
-                  <span style={{ color: "#a78bfa" }}>Portal</span> Access
+                  <span style={{ color: "#20c997" }}>Portal</span> Access
                 </h2>
-                <p style={{ marginBottom: "1.5rem", color: "rgba(255, 255, 255, 0.8)", fontSize: "1.1rem", lineHeight: "1.6" }}>
+                <p className="mb-4" style={{ color: "rgba(255, 255, 255, 0.8)", fontSize: "1.1rem", lineHeight: "1.6" }}>
                   Access your dedicated agent dashboard to manage policies, clients, and commissions with AI-powered insights.
                 </p>
               </div>
 
               {/* Features List */}
-              <div style={{ marginBottom: "3rem" }}>
-                <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
+              <div className="mb-5">
+                <div className="d-flex align-items-center mb-3">
                   <div
                     style={{
                       width: "40px",
                       height: "40px",
-                      background: "rgba(167, 139, 250, 0.2)",
+                      background: "rgba(32, 201, 151, 0.2)",
                       borderRadius: "10px",
                       display: "flex",
                       alignItems: "center",
@@ -177,19 +167,19 @@ export default function AgentLogin() {
                       marginRight: "15px",
                     }}
                   >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" strokeWidth="2">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#20c997" strokeWidth="2">
                       <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
                     </svg>
                   </div>
                   <span style={{ fontSize: "1rem" }}>Client Management Tools</span>
                 </div>
 
-                <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
+                <div className="d-flex align-items-center mb-3">
                   <div
                     style={{
                       width: "40px",
                       height: "40px",
-                      background: "rgba(167, 139, 250, 0.2)",
+                      background: "rgba(32, 201, 151, 0.2)",
                       borderRadius: "10px",
                       display: "flex",
                       alignItems: "center",
@@ -197,7 +187,7 @@ export default function AgentLogin() {
                       marginRight: "15px",
                     }}
                   >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" strokeWidth="2">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#20c997" strokeWidth="2">
                       <line x1="12" y1="1" x2="12" y2="23" />
                       <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                     </svg>
@@ -205,12 +195,12 @@ export default function AgentLogin() {
                   <span style={{ fontSize: "1rem" }}>Commission Tracking</span>
                 </div>
 
-                <div style={{ display: "flex", alignItems: "center" }}>
+                <div className="d-flex align-items-center">
                   <div
                     style={{
                       width: "40px",
                       height: "40px",
-                      background: "rgba(167, 139, 250, 0.2)",
+                      background: "rgba(32, 201, 151, 0.2)",
                       borderRadius: "10px",
                       display: "flex",
                       alignItems: "center",
@@ -218,7 +208,7 @@ export default function AgentLogin() {
                       marginRight: "15px",
                     }}
                   >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" strokeWidth="2">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#20c997" strokeWidth="2">
                       <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
                       <polyline points="22,4 12,14.01 9,11.01" />
                     </svg>
@@ -229,7 +219,7 @@ export default function AgentLogin() {
 
               {/* Bottom Text */}
               <div style={{ borderTop: "1px solid rgba(255, 255, 255, 0.2)", paddingTop: "20px" }}>
-                <p style={{ margin: "0", color: "rgba(255, 255, 255, 0.7)", fontSize: "0.9rem" }}>
+                <p className="mb-0" style={{ color: "rgba(255, 255, 255, 0.7)", fontSize: "0.9rem" }}>
                   Trusted by 5,000+ insurance agents nationwide
                 </p>
               </div>
@@ -243,7 +233,7 @@ export default function AgentLogin() {
                 right: "10%",
                 width: "100px",
                 height: "100px",
-                background: "radial-gradient(circle, rgba(167, 139, 250, 0.3) 0%, transparent 70%)",
+                background: "radial-gradient(circle, rgba(32, 201, 151, 0.3) 0%, transparent 70%)",
                 borderRadius: "50%",
               }}
             />
@@ -261,21 +251,21 @@ export default function AgentLogin() {
           </div>
 
           {/* Right Side - Form */}
-          <div style={{ flex: "1 1 50%", minWidth: "300px" }}>
-            <div style={{ padding: "2.5rem" }}>
+          <div className="col-md-6">
+            <div className="p-4 p-md-5">
               {/* Header */}
-              <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+              <div className="text-center mb-4">
                 <div
                   style={{
                     width: "70px",
                     height: "70px",
-                    background: "linear-gradient(135deg, #6366f1, #2d1b4e)",
+                    background: "linear-gradient(135deg, #087f5b, #010f0c)",
                     borderRadius: "16px",
                     margin: "0 auto 16px",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    boxShadow: "0 8px 25px rgba(99, 102, 241, 0.3)",
+                    boxShadow: "0 8px 25px rgba(8, 127, 91, 0.3)",
                     color: "white",
                   }}
                 >
@@ -293,39 +283,37 @@ export default function AgentLogin() {
                     <line x1="23" y1="11" x2="17" y2="11" />
                   </svg>
                 </div>
-                <h3 style={{ fontWeight: "bold", color: "#2d1b4e", margin: "0 0 0.5rem 0" }}>Agent Login</h3>
-                <p style={{ color: "#6c757d", margin: "0" }}>Access your agent dashboard</p>
+                <h3 className="fw-bold" style={{ color: "#010f0c" }}>Agent Login</h3>
+                <p className="text-muted mb-0">Access your agent dashboard</p>
               </div>
 
               {/* Login Form */}
-              <div>
-                <div style={{ marginBottom: "1rem" }}>
-                  <label style={{ display: "block", fontWeight: "600", color: "#2d1b4e", fontSize: "0.9rem", marginBottom: "0.5rem" }}>
+              <form onSubmit={handleLogin} autoComplete="on">
+                <div className="mb-3">
+                  <label className="form-label fw-semibold" style={{ color: "#010f0c", fontSize: "0.9rem" }}>
                     Email Address
                   </label>
-                  <div style={{ position: "relative" }}>
+                  <div className="position-relative">
                     <input
                       type="email"
                       id="agent-email"
                       name="username"
                       autoComplete="username"
+                      className={`form-control ${errorEmail ? "is-invalid" : ""}`}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
                       placeholder="agent@example.com"
                       style={{
-                        width: "100%",
                         borderRadius: "10px",
                         border: `1px solid ${errorEmail ? "#dc3545" : "#e0e0e0"}`,
                         padding: "12px 16px 12px 44px",
                         fontSize: "0.95rem",
                         transition: "all 0.3s ease",
-                        outline: "none",
-                        boxSizing: "border-box",
                       }}
                       onFocus={(e) => {
-                        e.target.style.borderColor = "#6366f1";
-                        e.target.style.boxShadow = "0 0 0 3px rgba(99, 102, 241, 0.1)";
+                        e.target.style.borderColor = "#087f5b";
+                        e.target.style.boxShadow = "0 0 0 3px rgba(8, 127, 91, 0.1)";
                       }}
                       onBlur={(e) => {
                         e.target.style.borderColor = errorEmail ? "#dc3545" : "#e0e0e0";
@@ -339,12 +327,12 @@ export default function AgentLogin() {
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="2"
+                      className="position-absolute"
                       style={{
-                        position: "absolute",
                         top: "50%",
                         left: "16px",
                         transform: "translateY(-50%)",
-                        color: errorEmail ? "#dc3545" : "#6366f1",
+                        color: errorEmail ? "#dc3545" : "#087f5b",
                         opacity: 0.6,
                       }}
                     >
@@ -353,8 +341,8 @@ export default function AgentLogin() {
                     </svg>
                   </div>
                   {errorEmail && (
-                    <div style={{ display: "flex", alignItems: "center", marginTop: "0.5rem", color: "#dc3545", fontSize: "0.8rem" }}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: "0.25rem" }}>
+                    <div className="d-flex align-items-center mt-2" style={{ color: "#dc3545", fontSize: "0.8rem" }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="me-1">
                         <circle cx="12" cy="12" r="10" />
                         <line x1="12" y1="8" x2="12" y2="12" />
                         <line x1="12" y1="16" x2="12.01" y2="16" />
@@ -364,33 +352,31 @@ export default function AgentLogin() {
                   )}
                 </div>
 
-                <div style={{ marginBottom: "1.5rem" }}>
-                  <label style={{ display: "block", fontWeight: "600", color: "#2d1b4e", fontSize: "0.9rem", marginBottom: "0.5rem" }}>
+                <div className="mb-4">
+                  <label className="form-label fw-semibold" style={{ color: "#010f0c", fontSize: "0.9rem" }}>
                     Password
                   </label>
-                  <div style={{ position: "relative" }}>
+                  <div className="position-relative">
                     <input
                       type={showPassword ? "text" : "password"}
                       id="agent-password"
                       name="password"
                       autoComplete="current-password"
+                      className={`form-control ${errorPassword ? "is-invalid" : ""}`}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
                       placeholder="Enter your password"
                       style={{
-                        width: "100%",
                         borderRadius: "10px",
                         border: `1px solid ${errorPassword ? "#dc3545" : "#e0e0e0"}`,
                         padding: "12px 44px 12px 44px",
                         fontSize: "0.95rem",
                         transition: "all 0.3s ease",
-                        outline: "none",
-                        boxSizing: "border-box",
                       }}
                       onFocus={(e) => {
-                        e.target.style.borderColor = "#6366f1";
-                        e.target.style.boxShadow = "0 0 0 3px rgba(99, 102, 241, 0.1)";
+                        e.target.style.borderColor = "#087f5b";
+                        e.target.style.boxShadow = "0 0 0 3px rgba(8, 127, 91, 0.1)";
                       }}
                       onBlur={(e) => {
                         e.target.style.borderColor = errorPassword ? "#dc3545" : "#e0e0e0";
@@ -404,12 +390,12 @@ export default function AgentLogin() {
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="2"
+                      className="position-absolute"
                       style={{
-                        position: "absolute",
                         top: "50%",
                         left: "16px",
                         transform: "translateY(-50%)",
-                        color: errorPassword ? "#dc3545" : "#6366f1",
+                        color: errorPassword ? "#dc3545" : "#087f5b",
                         opacity: 0.6,
                       }}
                     >
@@ -418,17 +404,14 @@ export default function AgentLogin() {
                     </svg>
                     <button
                       type="button"
+                      className="btn btn-link position-absolute p-0 border-0"
                       style={{
-                        position: "absolute",
                         top: "50%",
                         right: "16px",
                         transform: "translateY(-50%)",
-                        color: errorPassword ? "#dc3545" : "#6366f1",
+                        color: errorPassword ? "#dc3545" : "#087f5b",
                         background: "none",
-                        border: "none",
                         opacity: 0.6,
-                        cursor: "pointer",
-                        padding: "0",
                       }}
                       onClick={() => setShowPassword(!showPassword)}
                     >
@@ -455,8 +438,8 @@ export default function AgentLogin() {
                     </button>
                   </div>
                   {errorPassword && (
-                    <div style={{ display: "flex", alignItems: "center", marginTop: "0.5rem", color: "#dc3545", fontSize: "0.8rem" }}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: "0.25rem" }}>
+                    <div className="d-flex align-items-center mt-2" style={{ color: "#dc3545", fontSize: "0.8rem" }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="me-1">
                         <circle cx="12" cy="12" r="10" />
                         <line x1="12" y1="8" x2="12" y2="12" />
                         <line x1="12" y1="16" x2="12.01" y2="16" />
@@ -467,100 +450,80 @@ export default function AgentLogin() {
                 </div>
 
                 <button
-                  type="button"
-                  onClick={handleLogin}
+                  type="submit"
+                  className="btn w-100 fw-semibold position-relative"
                   disabled={loading}
                   style={{
-                    width: "100%",
                     borderRadius: "10px",
-                    background: "linear-gradient(135deg, #6366f1, #2d1b4e)",
+                    background: "linear-gradient(135deg, #087f5b, #010f0c)",
                     border: "none",
                     color: "white",
                     padding: "14px",
                     fontSize: "1rem",
-                    fontWeight: "600",
                     transition: "all 0.3s ease",
-                    boxShadow: "0 4px 15px rgba(99, 102, 241, 0.3)",
+                    boxShadow: "0 4px 15px rgba(8, 127, 91, 0.3)",
                     opacity: loading ? 0.7 : 1,
-                    cursor: loading ? "not-allowed" : "pointer",
                   }}
                   onMouseEnter={(e) => {
                     if (!loading) {
                       e.target.style.transform = "translateY(-2px)";
-                      e.target.style.boxShadow = "0 6px 20px rgba(99, 102, 241, 0.4)";
+                      e.target.style.boxShadow = "0 6px 20px rgba(8, 127, 91, 0.4)";
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (!loading) {
                       e.target.style.transform = "translateY(0)";
-                      e.target.style.boxShadow = "0 4px 15px rgba(99, 102, 241, 0.3)";
+                      e.target.style.boxShadow = "0 4px 15px rgba(8, 127, 91, 0.3)";
                     }
                   }}
                 >
                   {loading ? (
                     <>
-                      <span style={{ 
-                        display: "inline-block",
-                        width: "14px",
-                        height: "14px",
-                        border: "2px solid rgba(255,255,255,0.3)",
-                        borderTop: "2px solid white",
-                        borderRadius: "50%",
-                        animation: "spin 1s linear infinite",
-                        marginRight: "8px"
-                      }} />
+                      <span className="spinner-border spinner-border-sm me-2" />
                       Signing In...
                     </>
                   ) : (
                     "Access Agent Dashboard"
                   )}
                 </button>
-              </div>
+              </form>
 
               {/* Footer */}
-              <div style={{ textAlign: "center", marginTop: "1.5rem" }}>
-                <p style={{ marginBottom: "0.5rem", color: "#6c757d", fontSize: "0.9rem" }}>
+              <div className="text-center mt-4">
+                <p className="mb-2 text-muted" style={{ fontSize: "0.9rem" }}>
                   Need agent assistance?
                 </p>
-                <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                  <a
-                    href="#"
+                <div className="d-flex justify-content-center">
+                  <Link
+                    to="/agent/register"
+                    className="fw-semibold text-decoration-none me-3"
                     style={{
-                      color: "#6366f1",
+                      color: "#087f5b",
                       fontSize: "0.9rem",
-                      textDecoration: "none",
-                      fontWeight: "600",
                       transition: "color 0.3s ease",
-                      marginRight: "0.75rem",
                     }}
                     onMouseEnter={(e) => {
-                      e.target.style.color = "#2d1b4e";
+                      e.target.style.color = "#010f0c";
                     }}
                     onMouseLeave={(e) => {
-                      e.target.style.color = "#6366f1";
+                      e.target.style.color = "#087f5b";
                     }}
                   >
                     Register New Agent
-                  </a>
+                  </Link>
                   <span style={{ color: "#ccc" }}>|</span>
                   <button
+                    className="btn btn-link fw-semibold text-decoration-none p-0 border-0 ms-3"
                     style={{
-                      color: "#6366f1",
+                      color: "#087f5b",
                       fontSize: "0.9rem",
-                      textDecoration: "none",
-                      fontWeight: "600",
-                      background: "none",
-                      border: "none",
-                      cursor: "pointer",
-                      padding: "0",
-                      marginLeft: "0.75rem",
                       transition: "color 0.3s ease",
                     }}
                     onMouseEnter={(e) => {
-                      e.target.style.color = "#2d1b4e";
+                      e.target.style.color = "#010f0c";
                     }}
                     onMouseLeave={(e) => {
-                      e.target.style.color = "#6366f1";
+                      e.target.style.color = "#087f5b";
                     }}
                   >
                     Contact Admin
@@ -569,8 +532,8 @@ export default function AgentLogin() {
               </div>
 
               {/* Security Badge */}
-              <div style={{ textAlign: "center", marginTop: "1.5rem", paddingTop: "1rem", borderTop: "1px solid #e0e0e0" }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div className="text-center mt-4 pt-3" style={{ borderTop: "1px solid #e0e0e0" }}>
+                <div className="d-flex align-items-center justify-content-center">
                   <svg
                     width="14"
                     height="14"
@@ -578,7 +541,8 @@ export default function AgentLogin() {
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"
-                    style={{ color: "#6366f1", marginRight: "0.5rem" }}
+                    className="me-2"
+                    style={{ color: "#087f5b" }}
                   >
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
@@ -592,13 +556,6 @@ export default function AgentLogin() {
           </div>
         </div>
       </div>
-      
-      <style>{`
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-      `}</style>
     </div>
   );
 }

@@ -233,7 +233,7 @@ export default function AgentQueries({
                         height: `${height}px`, 
                         width: '25px',
                         opacity: 0.8,
-                        background: 'linear-gradient(135deg, #4c1d95 0%, #6366f1 100%) !important'
+                        background: 'linear-gradient(135deg, #0f0f1a 0%, #206c95ff 100%) !important'
                       }}
                     ></div>
                     <div className="small text-muted mt-1">{day}</div>
@@ -334,7 +334,8 @@ export default function AgentQueries({
       {/* Header with Enhanced Availability Toggle */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <h3 className="mb-2 text-gradient">Employee Queries</h3>
+          <h3 className="mb-2" style={{ fontWeight: '700', background: 'linear-gradient(to right, #010f0c, #087f5b)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Employee Queries</h3>
+
           <p className="text-muted mb-0">Manage and respond to employee inquiries</p>
         </div>
         <div className="d-flex align-items-center gap-3">
@@ -561,14 +562,13 @@ export default function AgentQueries({
         </div>
       </div>
 
-      {/* Global Styles for Lavender-Indigo Theme */}
+      {/* Global Styles for Theme Consistency */}
       <style>{`
         .text-gradient {
-          background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%);
+          background: linear-gradient(135deg, #0f0f1a 0%, #206c95ff 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
-          font-weight: 700;
         }
 
         .dashboard-card {
@@ -592,43 +592,33 @@ export default function AgentQueries({
         }
 
         .btn-primary {
-          background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%);
+          background: linear-gradient(135deg, #0f0f1a 0%, #206c95ff 100%);
           border: none;
           border-radius: 8px;
           font-weight: 500;
-          color: white;
         }
 
         .btn-primary:hover {
-          background: linear-gradient(135deg, #3b1470 0%, #4f46e5 100%);
+          background: linear-gradient(135deg, #0a0a14 0%, #1a5a7a 100%);
           transform: translateY(-1px);
-          box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+          box-shadow: 0 4px 15px rgba(32, 108, 149, 0.3);
         }
 
         .btn-outline-primary {
-          border: 2px solid #6366f1;
-          color: #6366f1;
+          border: 2px solid #206c95ff;
+          color: #206c95ff;
           border-radius: 8px;
           font-weight: 500;
         }
 
         .btn-outline-primary:hover {
-          background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%);
-          border-color: #6366f1;
-          color: white;
+          background: linear-gradient(135deg, #0f0f1a 0%, #206c95ff 100%);
+          border-color: #206c95ff;
           transform: translateY(-1px);
         }
 
         .badge.bg-primary {
-          background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%) !important;
-        }
-
-        .bg-primary {
-          background: linear-gradient(135deg, #4c1d95 0%, #6366f1 100%) !important;
-        }
-
-        .text-primary {
-          color: #6366f1 !important;
+          background: linear-gradient(135deg, #0f0f1a 0%, #206c95ff 100%) !important;
         }
 
         .table th {
@@ -669,18 +659,8 @@ export default function AgentQueries({
         }
 
         .form-control:focus {
-          border-color: #6366f1;
-          box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
-        }
-
-        .form-check-input:checked {
-          background-color: #6366f1;
-          border-color: #6366f1;
-        }
-
-        .form-check-input:focus {
-          border-color: #6366f1;
-          box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
+          border-color: #206c95ff;
+          box-shadow: 0 0 0 0.2rem rgba(32, 108, 149, 0.1);
         }
 
         /* Font consistency */

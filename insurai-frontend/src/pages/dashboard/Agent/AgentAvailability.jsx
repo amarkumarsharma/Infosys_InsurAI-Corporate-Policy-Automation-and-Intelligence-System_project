@@ -44,9 +44,9 @@ export default function AgentAvailability({
 
   return (
     <div>
-      <h3 className="mb-4 fw-bold" style={{ background: 'linear-gradient(to right, #4c1d95, #6366f1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Availability Settings ({agentName})</h3>
+      <h3 className="mb-4 fw-bold" style={{ background: 'linear-gradient(to right, #010f0c, #087f5b)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Availability Settings ({agentName})</h3>
       <div className="card shadow-sm">
-        <div className="card-header text-white" style={{ backgroundColor: '#6366f1' }}>
+        <div className="card-header bg-success text-white">
           <h5 className="mb-0">
             <i className="bi bi-person-check me-2"></i> Set Your Availability
           </h5>

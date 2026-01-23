@@ -32,20 +32,20 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
         http
             .csrf(csrf -> csrf.disable())
-            .cors(cors -> {})
             .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
+            .cors(cors -> {})
+
             .authorizeHttpRequests(auth -> auth
 
-                // Allow preflight
+                // Preflight
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                // H2 Console
+                // H2
                 .requestMatchers("/h2-console/**").permitAll()
 
-                // Public endpoints
+                // Public auth endpoints
                 .requestMatchers(
                         "/auth/**",
                         "/agent/login",
@@ -58,11 +58,11 @@ public class SecurityConfig {
                         "/auth/reset-password/**"
                 ).permitAll()
 
-                // Static / uploads
+                // Public resources
                 .requestMatchers("/uploads/**").permitAll()
                 .requestMatchers("/employee/policies").permitAll()
 
-                // Secured endpoints
+                // Secured by authority (NOT role)
                 .requestMatchers("/agent/**").hasAuthority("AGENT")
                 .requestMatchers("/employee/**").hasAuthority("EMPLOYEE")
                 .requestMatchers("/hr/**").hasAuthority("HR")
@@ -70,10 +70,10 @@ public class SecurityConfig {
 
                 .anyRequest().authenticated()
             )
+
             .httpBasic(httpBasic -> httpBasic.disable())
             .formLogin(formLogin -> formLogin.disable());
 
-        // Order matters: JWT filters must run before UsernamePasswordAuthenticationFilter
         http.addFilterBefore(employeeJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(agentJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(hrJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -91,23 +91,22 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // Mail sender
+    // Mail
     @Bean
     public JavaMailSender javaMailSender() {
         return new JavaMailSenderImpl();
     }
 
-    // CORS Configuration
+    // CORS
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins(
-                                "http://localhost:5173",
-                                "http://localhost:5174",
-                                "http://localhost:8080"
+                        .allowedOrigins("http://localhost:5173",
+                                        "http://localhost:5174",
+                                        "http://localhost:8080"
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")

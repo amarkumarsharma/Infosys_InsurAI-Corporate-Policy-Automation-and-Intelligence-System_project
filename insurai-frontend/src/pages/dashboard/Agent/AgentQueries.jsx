@@ -1,17 +1,15 @@
 import React, { useState, useMemo } from "react";
 
-export default function AgentQueries({
-  availability,
-  toggleAvailability,
-  filter,
-  setFilter,
-  employeeQueries,
-  handleResponseChange,
-  respondToQuery,
-  axios,
-  setEmployeeQueries
+export default function AgentQueries({ 
+  availability, 
+  filter, 
+  setFilter, 
+  employeeQueries, 
+  handleResponseChange, 
+  respondToQuery, 
+  axios, 
+  setEmployeeQueries 
 }) {
-
   const [activeChart, setActiveChart] = useState("status");
   const [selectedQuery, setSelectedQuery] = useState(null);
   const [quickResponse, setQuickResponse] = useState("");
@@ -80,7 +78,10 @@ export default function AgentQueries({
     setQuickResponse("");
   };
 
-  
+  // Toggle availability
+  const toggleAvailability = () => {
+    alert(`You are now ${!availability ? 'available' : 'unavailable'} for queries`);
+  };
 
   // Enhanced Statistics Cards with Theme Colors
   const renderStatsCards = () => (

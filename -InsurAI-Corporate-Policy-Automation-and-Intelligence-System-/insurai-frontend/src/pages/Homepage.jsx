@@ -428,7 +428,7 @@ const HomePage = () => {
         </motion.div>
       </section>
 
-      {/* ================= TECHNOLOGY STACK (REPLACED) ================= */}
+      {/* ================= TECHNOLOGY STACK (HUB-SPOKE DESIGN) ================= */}
       <section id="technology" style={styles.section}>
         <motion.h2
           variants={fadeUp}
@@ -440,26 +440,112 @@ const HomePage = () => {
           Core Application <span style={styles.heroGradient}>Modules</span>
         </motion.h2>
 
-        <div style={styles.techGrid}>
-          {techStack.map((mod, i) => (
-            <motion.div
-              key={i}
-              {...scaleHover}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.08 }}
-              viewport={{ once: true }}
-              style={styles.techCard}
-            >
-              <div style={styles.techIcon}>{mod.icon}</div>
-              <div style={{ flex: 1 }}>
-                <h4 style={styles.techName}>{mod.name}</h4>
-                <div style={styles.techCategory}>{mod.category}</div>
-                <p style={styles.techDesc}>{mod.desc}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+        <motion.div 
+          style={styles.techHubContainer}
+          initial={{ opacity: 0, scale: 0.8 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+        >
+          {/* Central Hub */}
+          <motion.div 
+            style={styles.techCentralHub}
+            animate={{
+              boxShadow: [
+                "0 0 40px rgba(56,189,248,0.4), 0 0 80px rgba(129,140,248,0.3)",
+                "0 0 60px rgba(129,140,248,0.5), 0 0 100px rgba(56,189,248,0.4)",
+                "0 0 40px rgba(56,189,248,0.4), 0 0 80px rgba(129,140,248,0.3)",
+              ],
+              transition: { duration: 3, repeat: Infinity, ease: "easeInOut" }
+            }}
+          >
+            <div style={styles.hubIcon}>🚀</div>
+            <div style={styles.hubTitle}>InsurAI</div>
+            <div style={styles.hubSubtitle}>Core Platform</div>
+          </motion.div>
+
+          {/* Connection Lines and Module Cards */}
+          {techStack.map((mod, i) => {
+            const angle = (i * 360) / techStack.length;
+            const radius = 380;
+            const x = Math.cos((angle - 90) * (Math.PI / 180)) * radius;
+            const y = Math.sin((angle - 90) * (Math.PI / 180)) * radius;
+
+            return (
+              <React.Fragment key={i}>
+                {/* Connecting Line with Arrow */}
+                <motion.svg
+                  style={{
+                    ...styles.techConnector,
+                    transform: `rotate(${angle}deg)`,
+                  }}
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  whileInView={{ pathLength: 1, opacity: 1 }}
+                  transition={{ duration: 1, delay: i * 0.15 }}
+                  viewport={{ once: true }}
+                  width="400"
+                  height="20"
+                >
+                  <defs>
+                    <linearGradient id={`gradient-${i}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" style={{ stopColor: "rgba(56,189,248,0.8)", stopOpacity: 1 }} />
+                      <stop offset="50%" style={{ stopColor: "rgba(129,140,248,0.6)", stopOpacity: 1 }} />
+                      <stop offset="100%" style={{ stopColor: "rgba(244,114,182,0.4)", stopOpacity: 1 }} />
+                    </linearGradient>
+                    <marker
+                      id={`arrowhead-${i}`}
+                      markerWidth="10"
+                      markerHeight="10"
+                      refX="8"
+                      refY="3"
+                      orient="auto"
+                    >
+                      <polygon points="0 0, 10 3, 0 6" fill="rgba(56,189,248,0.8)" />
+                    </marker>
+                  </defs>
+                  <motion.line
+                    x1="0"
+                    y1="10"
+                    x2="380"
+                    y2="10"
+                    stroke={`url(#gradient-${i})`}
+                    strokeWidth="2.5"
+                    strokeDasharray="8,4"
+                    markerEnd={`url(#arrowhead-${i})`}
+                    animate={{
+                      strokeDashoffset: [0, -12],
+                      transition: { duration: 2, repeat: Infinity, ease: "linear" }
+                    }}
+                  />
+                </motion.svg>
+
+                {/* Module Card */}
+                <motion.div
+                  style={{
+                    ...styles.techModuleCard,
+                    left: `calc(50% + ${x}px)`,
+                    top: `calc(50% + ${y}px)`,
+                  }}
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: i * 0.15 + 0.3, duration: 0.5 }}
+                  whileHover={{
+                    scale: 1.08,
+                    boxShadow: "0 0 40px rgba(56,189,248,0.6), 0 12px 48px rgba(0,0,0,0.5)",
+                    borderColor: "rgba(56,189,248,0.8)",
+                  }}
+                  viewport={{ once: true }}
+                >
+                  <div style={styles.moduleIcon}>{mod.icon}</div>
+                  <h4 style={styles.moduleName}>{mod.name}</h4>
+                  <div style={styles.moduleCategory}>{mod.category}</div>
+                  <p style={styles.moduleDesc}>{mod.desc}</p>
+                  <div style={styles.moduleGlow} />
+                </motion.div>
+              </React.Fragment>
+            );
+          })}
+        </motion.div>
       </section>
 
       {/* ================= ROLES INFO ================= */}
@@ -533,33 +619,54 @@ const HomePage = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          style={{ ...styles.sectionTitle, fontSize: "1.8rem", marginTop: "4rem" }}
+          style={{ ...styles.sectionTitle, fontSize: "2rem", marginTop: "4rem", marginBottom: "3rem" }}
         >
-          What Our Clients Say
+          What Our <span style={styles.heroGradient}>Clients Say</span>
         </motion.h3>
 
-        <div style={styles.testimonialsGrid}>
-          {testimonials.map((testimonial, i) => (
-            <motion.div
-              key={i}
-              {...glowHover}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.2 }}
-              viewport={{ once: true }}
-              style={styles.testimonialCard}
-            >
-              <div style={styles.quoteIcon}>"</div>
-              <p style={styles.testimonialText}>{testimonial.text}</p>
-              <div style={styles.testimonialAuthor}>
-                <div style={styles.authorAvatar}>{testimonial.avatar}</div>
-                <div>
-                  <div style={styles.authorName}>{testimonial.name}</div>
-                  <div style={styles.authorRole}>{testimonial.role}</div>
+        <div style={styles.testimonialsWrapper}>
+          <motion.div 
+            style={styles.testimonialsScroller}
+            animate={{
+              x: [0, -2000],
+            }}
+            transition={{
+              x: {
+                duration: 40,
+                repeat: Infinity,
+                ease: "linear",
+              },
+            }}
+          >
+            {[...testimonials, ...testimonials].map((testimonial, i) => (
+              <motion.div
+                key={i}
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0 0 40px rgba(56,189,248,0.4), 0 12px 48px rgba(0,0,0,0.5)",
+                  borderColor: "rgba(56,189,248,0.6)",
+                }}
+                style={styles.testimonialCard}
+              >
+                <div style={styles.quoteIcon}>"</div>
+                <p style={styles.testimonialText}>{testimonial.text}</p>
+                <div style={styles.testimonialAuthor}>
+                  <img 
+                    src={testimonial.avatar} 
+                    alt={testimonial.name}
+                    style={styles.authorAvatar}
+                    onError={(e) => {
+                      e.target.src = 'https://via.placeholder.com/60/667eea/ffffff?text=' + testimonial.name.charAt(0);
+                    }}
+                  />
+                  <div>
+                    <div style={styles.authorName}>{testimonial.name}</div>
+                    <div style={styles.authorRole}>{testimonial.role}</div>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
@@ -612,6 +719,33 @@ const HomePage = () => {
           </div>
         </div>
       </footer>
+
+      {/* Global Scrollbar Styles */}
+      <style>{`
+        ::-webkit-scrollbar {
+          width: 12px;
+        }
+        ::-webkit-scrollbar-track {
+          background: linear-gradient(180deg, rgba(2,6,23,0.95) 0%, rgba(15,23,42,0.9) 100%);
+          border-left: 1px solid rgba(56,189,248,0.25);
+          box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+          background: linear-gradient(180deg, rgba(56,189,248,0.9) 0%, rgba(129,140,248,0.85) 50%, rgba(244,114,182,0.9) 100%);
+          borderRadius: 6px;
+          border: 2px solid rgba(2,6,23,0.9);
+          boxShadow: 0 0 15px rgba(56,189,248,0.6), inset 0 0 5px rgba(255,255,255,0.2);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(180deg, rgba(56,189,248,1) 0%, rgba(129,140,248,1) 50%, rgba(244,114,182,1) 100%);
+          boxShadow: 0 0 25px rgba(56,189,248,0.9), inset 0 0 8px rgba(255,255,255,0.3);
+          transform: scale(1.05);
+        }
+        * {
+          scrollbar-width: thin;
+          scrollbar-color: rgba(56,189,248,0.8) rgba(15,23,42,0.9);
+        }
+      `}</style>
     </div>
   );
 };
@@ -744,19 +878,57 @@ const testimonials = [
     text: "InsurAI has transformed our claim processing workflow. What used to take days now takes hours. The AI-powered fraud detection alone has saved us millions.",
     name: "Sarah Johnson",
     role: "Chief Operations Officer, GlobalInsure",
-    avatar: "👩‍💼"
+    avatar: "https://i.pravatar.cc/150?img=1",
+    company: "GlobalInsure"
   },
   {
     text: "The role-based dashboards are incredibly intuitive. Our HR team can now manage policies for thousands of employees with ease. Game-changing platform!",
     name: "Michael Chen",
     role: "HR Director, TechCorp Industries",
-    avatar: "👨‍💼"
+    avatar: "https://i.pravatar.cc/150?img=13",
+    company: "TechCorp"
   },
   {
     text: "As an agent, I can now assist 3x more customers per day. The automated workflows and real-time data access make my job so much more efficient.",
     name: "Emily Rodriguez",
     role: "Senior Insurance Agent, SecureLife",
-    avatar: "👩‍💻"
+    avatar: "https://i.pravatar.cc/150?img=5",
+    company: "SecureLife"
+  },
+  {
+    text: "The AI-driven insights have revolutionized how we assess risk. Our underwriting accuracy has improved by 40% since implementing InsurAI.",
+    name: "David Kumar",
+    role: "Chief Risk Officer, PrimeShield Insurance",
+    avatar: "https://i.pravatar.cc/150?img=12",
+    company: "PrimeShield"
+  },
+  {
+    text: "Implementation was seamless and our team was up and running in just two weeks. The support team is exceptional and always responsive.",
+    name: "Jennifer Martinez",
+    role: "IT Director, Apex Financial Services",
+    avatar: "https://i.pravatar.cc/150?img=9",
+    company: "Apex Financial"
+  },
+  {
+    text: "The real-time analytics dashboard gives us visibility we never had before. Decision-making has become data-driven and significantly faster.",
+    name: "Robert Thompson",
+    role: "VP of Operations, MegaCorp Insurance",
+    avatar: "https://i.pravatar.cc/150?img=14",
+    company: "MegaCorp"
+  },
+  {
+    text: "Our customer satisfaction scores have increased by 35% since adopting InsurAI. The platform has truly elevated our service quality.",
+    name: "Lisa Anderson",
+    role: "Customer Success Manager, SafeGuard Inc",
+    avatar: "https://i.pravatar.cc/150?img=10",
+    company: "SafeGuard"
+  },
+  {
+    text: "The fraud detection capabilities are unmatched. We've identified and prevented over $2M in fraudulent claims in just six months.",
+    name: "James Wilson",
+    role: "Fraud Investigation Lead, TrustSecure",
+    avatar: "https://i.pravatar.cc/150?img=15",
+    company: "TrustSecure"
   }
 ];
 
@@ -819,6 +991,26 @@ const styles = {
     background: theme.gradientMain,
     color: theme.textPrimary,
     overflowX: "hidden",
+  },
+
+  '@global': {
+    '::-webkit-scrollbar': {
+      width: '12px',
+    },
+    '::-webkit-scrollbar-track': {
+      background: 'linear-gradient(180deg, rgba(2,6,23,0.9) 0%, rgba(15,23,42,0.8) 100%)',
+      borderLeft: '1px solid rgba(56,189,248,0.2)',
+    },
+    '::-webkit-scrollbar-thumb': {
+      background: 'linear-gradient(180deg, rgba(56,189,248,0.8) 0%, rgba(129,140,248,0.8) 50%, rgba(244,114,182,0.8) 100%)',
+      borderRadius: '6px',
+      border: '2px solid rgba(2,6,23,0.9)',
+      boxShadow: '0 0 10px rgba(56,189,248,0.5)',
+    },
+    '::-webkit-scrollbar-thumb:hover': {
+      background: 'linear-gradient(180deg, rgba(56,189,248,1) 0%, rgba(129,140,248,1) 50%, rgba(244,114,182,1) 100%)',
+      boxShadow: '0 0 20px rgba(56,189,248,0.8)',
+    },
   },
 
   navbar: {
@@ -1333,58 +1525,133 @@ const styles = {
     color: theme.textSecondary,
   },
 
-  techGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-    gap: "1.25rem",
-    alignItems: "stretch",
-  },
-
-  techCard: {
-    background: "linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))",
-    border: `1px solid ${theme.border}`,
-    borderRadius: "14px",
-    padding: "1.5rem",
-    display: "flex",
-    gap: "1rem",
-    alignItems: "flex-start",
-    minHeight: "140px",
-  },
-
-  techIcon: {
-    fontSize: "2.4rem",
-    width: "56px",
-    height: "56px",
-    borderRadius: "12px",
+  techHubContainer: {
+    position: "relative",
+    width: "100%",
+    maxWidth: "1400px",
+    minHeight: "1100px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    background: "rgba(255,255,255,0.03)",
-    flexShrink: 0,
+    margin: "4rem auto",
+    padding: "2rem",
   },
 
-  techName: {
-    fontSize: "1.05rem",
-    fontWeight: 700,
-    marginBottom: "0.25rem",
+  techCentralHub: {
+    position: "absolute",
+    left: "50%",
+    top: "50%",
+    transform: "translate(-50%, -50%)",
+    width: "200px",
+    height: "200px",
+    borderRadius: "50%",
+    background: "linear-gradient(135deg, rgba(56,189,248,0.3) 0%, rgba(129,140,248,0.3) 50%, rgba(244,114,182,0.3) 100%)",
+    border: "3px solid rgba(56,189,248,0.6)",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    backdropFilter: "blur(20px)",
+    zIndex: 10,
+  },
+
+  hubIcon: {
+    fontSize: "3.5rem",
+    marginBottom: "0.5rem",
+    filter: "drop-shadow(0 4px 12px rgba(56,189,248,0.6))",
+  },
+
+  hubTitle: {
+    fontSize: "1.5rem",
+    fontWeight: 800,
     color: theme.textPrimary,
+    textAlign: "center",
+    marginBottom: "0.25rem",
   },
 
-  techCategory: {
+  hubSubtitle: {
+    fontSize: "0.85rem",
+    color: theme.neonBlue,
+    fontWeight: 600,
+    textTransform: "uppercase",
+    letterSpacing: "1px",
+  },
+
+  techConnector: {
+    position: "absolute",
+    left: "50%",
+    top: "50%",
+    transformOrigin: "left center",
+    marginLeft: "100px",
+    marginTop: "-5px",
+    pointerEvents: "none",
+    zIndex: 1,
+  },
+
+  techModuleCard: {
+    position: "absolute",
+    transform: "translate(-50%, -50%)",
+    width: "280px",
+    background: "linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(15,23,42,0.85) 100%)",
+    border: "2px solid rgba(56,189,248,0.3)",
+    borderRadius: "20px",
+    padding: "2rem",
+    backdropFilter: "blur(24px)",
+    boxShadow: "0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)",
+    zIndex: 5,
+    cursor: "pointer",
+    transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+    overflow: "hidden",
+  },
+
+  moduleIcon: {
+    fontSize: "2.8rem",
+    marginBottom: "1rem",
+    display: "flex",
+    justifyContent: "center",
+    filter: "drop-shadow(0 4px 12px rgba(56,189,248,0.4))",
+  },
+
+  moduleName: {
+    fontSize: "1.2rem",
+    fontWeight: 700,
+    marginBottom: "0.5rem",
+    color: theme.textPrimary,
+    textAlign: "center",
+  },
+
+  moduleCategory: {
     display: "inline-block",
-    padding: "0.18rem 0.5rem",
+    padding: "0.3rem 0.8rem",
     borderRadius: "999px",
-    background: "rgba(56,189,248,0.08)",
+    background: "rgba(56,189,248,0.15)",
     color: theme.neonBlue,
     fontSize: "0.75rem",
     fontWeight: 700,
-    marginBottom: "0.6rem",
+    marginBottom: "1rem",
+    textTransform: "uppercase",
+    letterSpacing: "0.5px",
+    width: "100%",
+    textAlign: "center",
   },
 
-  techDesc: {
+  moduleDesc: {
     fontSize: "0.9rem",
     color: theme.textSecondary,
-    lineHeight: 1.4,
+    lineHeight: 1.5,
+    textAlign: "center",
+  },
+
+  moduleGlow: {
+    position: "absolute",
+    top: "-50%",
+    left: "-50%",
+    width: "200%",
+    height: "200%",
+    background: "radial-gradient(circle, rgba(56,189,248,0.15) 0%, transparent 70%)",
+    pointerEvents: "none",
+    opacity: 0,
+    transition: "opacity 0.5s ease",
   },
 
   aboutContent: {
@@ -1409,19 +1676,33 @@ const styles = {
     marginBottom: "1.5rem",
   },
 
-  testimonialsGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+  testimonialsWrapper: {
+    width: "100%",
+    overflow: "hidden",
+    position: "relative",
+    padding: "2rem 0",
+    maskImage: "linear-gradient(90deg, transparent, black 10%, black 90%, transparent)",
+    WebkitMaskImage: "linear-gradient(90deg, transparent, black 10%, black 90%, transparent)",
+  },
+
+  testimonialsScroller: {
+    display: "flex",
     gap: "2rem",
+    width: "fit-content",
   },
 
   testimonialCard: {
-    background: theme.surface,
-    border: `1px solid ${theme.border}`,
-    borderRadius: "20px",
-    padding: "2rem",
-    backdropFilter: "blur(20px)",
+    background: "linear-gradient(135deg, rgba(15,23,42,0.9) 0%, rgba(15,23,42,0.7) 100%)",
+    border: `2px solid rgba(56,189,248,0.3)`,
+    borderRadius: "24px",
+    padding: "2.5rem",
+    backdropFilter: "blur(24px)",
     position: "relative",
+    minWidth: "400px",
+    maxWidth: "400px",
+    boxShadow: "0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)",
+    flexShrink: 0,
+    transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
   },
 
   quoteIcon: {
@@ -1449,14 +1730,12 @@ const styles = {
   },
 
   authorAvatar: {
-    width: "50px",
-    height: "50px",
+    width: "60px",
+    height: "60px",
     borderRadius: "50%",
-    background: theme.gradientNeon,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "1.5rem",
+    objectFit: "cover",
+    border: "3px solid rgba(56,189,248,0.4)",
+    boxShadow: "0 4px 12px rgba(56,189,248,0.3)",
   },
 
   authorName: {

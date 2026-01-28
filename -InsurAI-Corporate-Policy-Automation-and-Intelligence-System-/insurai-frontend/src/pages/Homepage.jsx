@@ -447,6 +447,87 @@ const HomePage = () => {
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
         >
+          {/* SVG for all connecting lines - single SVG for all arrows */}
+          <svg
+            style={{
+              position: "absolute",
+              left: 0,
+              top: 0,
+              width: "100%",
+              height: "100%",
+              pointerEvents: "none",
+              zIndex: 1,
+            }}
+            viewBox="0 0 1000 1000"
+            preserveAspectRatio="xMidYMid meet"
+          >
+            <defs>
+              <marker
+                id="arrowhead-main"
+                markerWidth="12"
+                markerHeight="10"
+                refX="10"
+                refY="5"
+                orient="auto"
+                markerUnits="userSpaceOnUse"
+              >
+                <polygon 
+                  points="0 0, 12 5, 0 10" 
+                  fill="#7DD3FC"
+                />
+              </marker>
+            </defs>
+            
+            {/* Draw all 6 arrows from center to each card position */}
+            {techStack.map((item, i) => {
+              const totalItems = techStack.length; // 6 items
+              const angleDeg = (i * 360) / totalItems - 90; // Start from top, go clockwise
+              const angleRad = angleDeg * (Math.PI / 180);
+              
+              const centerX = 500; // Center of viewBox
+              const centerY = 500;
+              const hubRadius = 90; // Radius of central hub
+              const cardDistance = 340; // Distance to card center
+              const cardRadius = 120; // Half of card width (approximate)
+              const gap = 16; // 1rem gap
+              
+              // modules that should be moved 20% farther from hub
+              const outerModules = ["Policy Manager", "Fraud Detection", "Analytics Dashboard", "Integrations & API"];
+              const distanceMultiplier = outerModules.includes(item.name) ? 1.2 : 1;
+              const effectiveCardDistance = cardDistance * distanceMultiplier;
+               
+              // Line starts from hub edge + gap
+              const startX = centerX + Math.cos(angleRad) * (hubRadius + gap);
+              const startY = centerY + Math.sin(angleRad) * (hubRadius + gap);
+              
+              // Line ends at card edge - gap
+              const endX = centerX + Math.cos(angleRad) * (effectiveCardDistance - cardRadius - gap);
+              const endY = centerY + Math.sin(angleRad) * (effectiveCardDistance - cardRadius - gap);
+              
+              return (
+                <motion.line
+                  key={i}
+                  x1={startX}
+                  y1={startY}
+                  x2={endX}
+                  y2={endY}
+                  stroke="#7DD3FC"
+                  strokeWidth="3"
+                  strokeDasharray="14 10"
+                  strokeLinecap="round"
+                  markerEnd="url(#arrowhead-main)"
+                  style={{
+                    filter: "drop-shadow(0 0 4px rgba(125,211,252,0.5))",
+                  }}
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  whileInView={{ pathLength: 1, opacity: 1 }}
+                  transition={{ duration: 0.8, delay: i * 0.1 }}
+                  viewport={{ once: true }}
+                />
+              );
+            })}
+          </svg>
+
           {/* Central Hub */}
           <motion.div 
             style={styles.techCentralHub}
@@ -464,105 +545,43 @@ const HomePage = () => {
             <div style={styles.hubSubtitle}>Core Platform</div>
           </motion.div>
 
-          {/* Connection Lines and Module Cards */}
           {techStack.map((mod, i) => {
-            const angle = (i * 360) / techStack.length;
-            const radius = 460; // Distance from center to module cards
-            const hubRadius = 200; // Half of central hub width (200px / 2)
-            const x = Math.cos((angle - 90) * (Math.PI / 180)) * radius;
-            const y = Math.sin((angle - 90) * (Math.PI / 180)) * radius;
+            const totalItems = techStack.length; // 6 items
+            const angleDeg = (i * 360) / totalItems - 90; // Start from top, go clockwise
+            const angleRad = angleDeg * (Math.PI / 180);
+            const cardDistance = 340; // base used by SVG above
             
-            // Calculate start point (edge of hub)
-            const startX = Math.cos((angle - 90) * (Math.PI / 180)) * hubRadius;
-            const startY = Math.sin((angle - 90) * (Math.PI / 180)) * hubRadius;
-
-            return (
-              <React.Fragment key={i}>
-                {/* Connecting Line with Arrow */}
-                <motion.svg
-                  style={{
-                    position: "absolute",
-                    left: "50%",
-                    top: "50%",
-                    width: radius + 100,
-                    height: radius + 100,
-                    transform: `translate(-50%, -50%) rotate(${angle}deg)`,
-                    transformOrigin: "center",
-                    pointerEvents: "none",
-                    zIndex: 1,
-                    overflow: "visible",
-                  }}
-                  initial={{ pathLength: 0, opacity: 0 }}
-                  whileInView={{ pathLength: 1, opacity: 0.8 }}
-                  transition={{ duration: 1, delay: i * 0.15 }}
-                  viewport={{ once: true }}
-                >
-                  <defs>
-                    <linearGradient id={`gradient-${i}`} x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" style={{ stopColor: "rgba(56,189,248,0.9)", stopOpacity: 1 }} />
-                      <stop offset="50%" style={{ stopColor: "rgba(129,140,248,0.8)", stopOpacity: 1 }} />
-                      <stop offset="100%" style={{ stopColor: "rgba(244,114,182,0.9)", stopOpacity: 1 }} />
-                    </linearGradient>
-                    <marker
-                      id={`arrowhead-${i}`}
-                      markerWidth="12"
-                      markerHeight="12"
-                      refX="10"
-                      refY="6"
-                      orient="auto"
-                    >
-                      <polygon 
-                        points="0 0, 12 6, 0 12" 
-                        fill="rgba(56,189,248,0.9)"
-                        stroke="rgba(129,140,248,0.6)"
-                        strokeWidth="0.5"
-                      />
-                    </marker>
-                  </defs>
-                  <motion.line
-                    x1={(radius + 100)/2}
-                    y1={(radius + 100)/2}
-                    x2={radius - 30}
-                    y2={(radius + 100)/2}
-                    stroke={`url(#gradient-${i})`}
-                    strokeWidth="3"
-                    strokeDasharray="10 6"
-                    markerEnd={`url(#arrowhead-${i})`}
-                    strokeLinecap="round"
-                    filter="drop-shadow(0 0 8px rgba(56,189,248,0.5))"
-                    animate={{
-                      strokeDashoffset: [0, -16],
-                      transition: { duration: 2.5, repeat: Infinity, ease: "linear" }
-                    }}
-                  />
-                </motion.svg>
-
-                {/* Module Card */}
-                <motion.div
-                  style={{
-                    ...styles.techModuleCard,
-                    left: `calc(50% + ${x}px)`,
-                    top: `calc(50% + ${y}px)`,
-                  }}
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: i * 0.15 + 0.3, duration: 0.5 }}
-                  whileHover={{
-                    scale: 1.08,
-                    boxShadow: "0 0 40px rgba(56,189,248,0.6), 0 12px 48px rgba(0,0,0,0.5)",
-                    borderColor: "rgba(56,189,248,0.8)",
-                  }}
-                  viewport={{ once: true }}
-                >
-                  <div style={styles.moduleIcon}>{mod.icon}</div>
-                  <h4 style={styles.moduleName}>{mod.name}</h4>
-                  <div style={styles.moduleCategory}>{mod.category}</div>
-                  <p style={styles.moduleDesc}>{mod.desc}</p>
-                  <div style={styles.moduleGlow} />
-                </motion.div>
-              </React.Fragment>
-            );
-          })}
+            const outerModules = ["Policy Manager", "Fraud Detection", "Analytics Dashboard", "Integrations & API"];
+            const multiplier = outerModules.includes(mod.name) ? 1.2 : 1;
+            const basePercent = 36; // original percent distance
+            const xPercent = Math.cos(angleRad) * (basePercent * multiplier);
+            const yPercent = Math.sin(angleRad) * (basePercent * multiplier);
+ 
+             return (
+               <motion.div
+                 key={i}
+                 style={{
+                   ...styles.techModuleCard,
+                   left: `calc(50% + ${xPercent}%)`,
+                   top: `calc(50% + ${yPercent}%)`,
+                 }}
+                 initial={{ opacity: 0, scale: 0.5 }}
+                 whileInView={{ opacity: 1, scale: 1 }}
+                 transition={{ delay: i * 0.1 + 0.3, duration: 0.5 }}
+                 whileHover={{
+                   scale: 1.06,
+                   boxShadow: "0 0 50px rgba(56,189,248,0.5), 0 15px 50px rgba(0,0,0,0.5)",
+                   borderColor: "rgba(56,189,248,0.8)",
+                 }}
+                 viewport={{ once: true }}
+               >
+                 <div style={styles.moduleIcon}>{mod.icon}</div>
+                 <h4 style={styles.moduleName}>{mod.name}</h4>
+                 <div style={styles.moduleCategory}>{mod.category}</div>
+                 <p style={styles.moduleDesc}>{mod.desc}</p>
+               </motion.div>
+             );
+           })}
         </motion.div>
       </section>
 
@@ -1258,60 +1277,65 @@ const styles = {
   },
 
   workflow: {
-    maxWidth: "900px",
+    maxWidth: "920px",
     margin: "0 auto",
     display: "grid",
-    gap: "2rem",
+    gap: "1.5rem",
     position: "relative",
+    padding: "3rem 2.5rem",
+    borderRadius: "32px",
+    background: "linear-gradient(180deg, rgba(15,23,42,0.85) 0%, rgba(2,6,23,0.95) 100%)",
+    border: "1px solid rgba(56,189,248,0.25)",
+    boxShadow: "0 20px 60px rgba(0,0,0,0.5), inset 0 0 40px rgba(56,189,248,0.08)",
   },
 
   workflowLine: {
     position: "absolute",
-    left: "28px",
-    top: "50px",
-    bottom: "50px",
-    width: "3px",
-    background: "linear-gradient(180deg, rgba(56,189,248,0.8) 0%, rgba(129,140,248,0.8) 50%, rgba(244,114,182,0.8) 100%)",
-    boxShadow: "0 0 20px rgba(56,189,248,0.5), 0 0 40px rgba(129,140,248,0.3)",
+    left: "50%",
+    top: "2rem",
+    bottom: "2rem",
+    width: "4px",
+    transform: "translateX(-50%)",
+    background: "linear-gradient(180deg, rgba(56,189,248,0) 0%, rgba(56,189,248,1) 35%, rgba(56,189,248,0.2) 100%)",
+    boxShadow: "0 0 20px rgba(56,189,248,0.6)",
+    borderRadius: "8px",
   },
 
   workflowStep: {
     display: "flex",
     gap: "1.5rem",
-    alignItems: "flex-start",
+    alignItems: "center",
     position: "relative",
-    background: "rgba(15,23,42,0.6)",
-    padding: "2rem",
-    borderRadius: "20px",
-    border: "1px solid rgba(56,189,248,0.2)",
-    backdropFilter: "blur(20px)",
-    boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
+    background: "rgba(2,6,23,0.85)",
+    padding: "1.8rem 2.2rem",
+    borderRadius: "24px",
+    border: "1px solid rgba(56,189,248,0.25)",
+    backdropFilter: "blur(24px)",
+    boxShadow: "0 8px 30px rgba(0,0,0,0.6), inset 0 0 25px rgba(56,189,248,0.05)",
+    overflow: "hidden",
   },
 
   stepIndex: {
-    width: "56px",
-    height: "56px",
+    width: "60px",
+    height: "60px",
     borderRadius: "50%",
-    background: theme.gradientNeon,
-    color: "#020617",
-    fontWeight: 800,
-    fontSize: "1.3rem",
+    background: "rgba(56,189,248,0.15)",
+    color: theme.neonBlue,
+    fontWeight: 700,
+    fontSize: "1.25rem",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     flexShrink: 0,
-    boxShadow: "0 0 30px rgba(56,189,248,0.6), 0 0 60px rgba(129,140,248,0.4)",
-    border: "3px solid rgba(2,6,23,0.9)",
+    border: "2px solid rgba(56,189,248,0.4)",
+    boxShadow: "0 0 25px rgba(56,189,248,0.4)",
   },
 
   stepTitle: {
     fontWeight: 700,
-    fontSize: "1.3rem",
+    fontSize: "1.4rem",
     color: theme.textPrimary,
-    marginBottom: "0.5rem",
-    background: theme.gradientNeon,
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
+    marginBottom: "0.35rem",
   },
 
   stepText: {
@@ -1545,14 +1569,13 @@ const styles = {
 
   techHubContainer: {
     position: "relative",
-    width: "100%",
-    maxWidth: "1400px",
-    height: "1200px",
+    width: "1000px",
+    height: "1000px",
+    maxWidth: "100%",
+    margin: "2rem auto",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    margin: "4rem auto",
-    padding: "3rem",
   },
 
   techCentralHub: {
@@ -1560,8 +1583,8 @@ const styles = {
     left: "50%",
     top: "50%",
     transform: "translate(-50%, -50%)",
-    width: "200px",
-    height: "200px",
+    width: "180px",
+    height: "180px",
     borderRadius: "50%",
     background: "linear-gradient(135deg, rgba(56,189,248,0.3) 0%, rgba(129,140,248,0.3) 50%, rgba(244,114,182,0.3) 100%)",
     border: "3px solid rgba(56,189,248,0.6)",
@@ -1574,28 +1597,26 @@ const styles = {
   },
 
   hubIcon: {
-    fontSize: "3.5rem",
-    marginBottom: "0.5rem",
+    fontSize: "2.8rem",
+    marginBottom: "0.3rem",
     filter: "drop-shadow(0 4px 12px rgba(56,189,248,0.6))",
   },
 
   hubTitle: {
-    fontSize: "1.5rem",
+    fontSize: "1.3rem",
     fontWeight: 800,
     color: theme.textPrimary,
     textAlign: "center",
-    marginBottom: "0.25rem",
+    marginBottom: "0.2rem",
   },
 
   hubSubtitle: {
-    fontSize: "0.85rem",
+    fontSize: "0.75rem",
     color: theme.neonBlue,
     fontWeight: 600,
     textTransform: "uppercase",
     letterSpacing: "1px",
   },
-
-
 
   techModuleCard: {
     position: "absolute",
@@ -1603,41 +1624,43 @@ const styles = {
     width: "260px",
     background: "linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(15,23,42,0.85) 100%)",
     border: "2px solid rgba(56,189,248,0.3)",
-    borderRadius: "20px",
-    padding: "2rem",
+    borderRadius: "16px",
+    padding: "1.25rem",
     backdropFilter: "blur(24px)",
     boxShadow: "0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)",
     zIndex: 5,
     cursor: "pointer",
     transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
     overflow: "hidden",
+    marginLeft: "-8.2rem",
+    marginTop: "-8rem",
   },
 
   moduleIcon: {
-    fontSize: "2.8rem",
-    marginBottom: "1rem",
+    fontSize: "2.2rem",
+    marginBottom: "0.8rem",
     display: "flex",
     justifyContent: "center",
     filter: "drop-shadow(0 4px 12px rgba(56,189,248,0.4))",
   },
 
   moduleName: {
-    fontSize: "1.2rem",
+    fontSize: "1.05rem",
     fontWeight: 700,
-    marginBottom: "0.5rem",
+    marginBottom: "0.4rem",
     color: theme.textPrimary,
     textAlign: "center",
   },
 
   moduleCategory: {
     display: "inline-block",
-    padding: "0.3rem 0.8rem",
+    padding: "0.25rem 0.7rem",
     borderRadius: "999px",
     background: "rgba(56,189,248,0.15)",
     color: theme.neonBlue,
-    fontSize: "0.75rem",
+    fontSize: "0.7rem",
     fontWeight: 700,
-    marginBottom: "1rem",
+    marginBottom: "0.8rem",
     textTransform: "uppercase",
     letterSpacing: "0.5px",
     width: "100%",
@@ -1645,9 +1668,9 @@ const styles = {
   },
 
   moduleDesc: {
-    fontSize: "0.9rem",
+    fontSize: "0.8rem",
     color: theme.textSecondary,
-    lineHeight: 1.5,
+    lineHeight: 1.4,
     textAlign: "center",
   },
 

@@ -37,7 +37,7 @@ export default function EmployeeRegister() {
     }
 
     try {
-      const res = await fetch("https://insurai-backend-production.up.railway.appauth/register", {
+      const res = await fetch("https://insurai-backend-production.up.railway.app/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 

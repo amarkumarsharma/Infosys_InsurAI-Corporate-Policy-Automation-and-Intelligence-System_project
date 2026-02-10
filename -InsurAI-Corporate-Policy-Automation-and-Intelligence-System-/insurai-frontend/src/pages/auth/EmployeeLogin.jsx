@@ -29,7 +29,7 @@ export default function EmployeeLogin() {
     }
 
     try {
-      const res = await axios.post("https://insurai-backend-production.up.railway.appauth/login", {
+      const res = await axios.post("https://insurai-backend-production.up.railway.app/auth/login", {
         email: email.trim().toLowerCase(),
         password,
       });

@@ -27,12 +27,10 @@ function PrivateRoute({ children, role }) {
   const token = localStorage.getItem("token");
   const userRole = localStorage.getItem("role");
 
-  // Redirect to home if not authenticated
   if (!token) {
     return <Navigate to="/" replace />;
   }
 
-  // Check role authorization
   if (role && userRole?.toLowerCase() !== role.toLowerCase()) {
     return <Navigate to="/" replace />;
   }
@@ -42,7 +40,12 @@ function PrivateRoute({ children, role }) {
 
 function App() {
   return (
-    <Router>
+    <Router
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+    >
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Homepage />} />
@@ -51,7 +54,10 @@ function App() {
         <Route path="/employee/register" element={<EmployeeRegister />} />
         <Route path="/employee/login" element={<EmployeeLogin />} />
         <Route path="/employee/forgot-password" element={<ForgotPassword />} />
-        <Route path="/employee/reset-password/:token" element={<ResetPassword />} />
+        <Route
+          path="/employee/reset-password/:token"
+          element={<ResetPassword />}
+        />
         <Route
           path="/employee/dashboard"
           element={
@@ -110,7 +116,7 @@ function App() {
           }
         />
 
-        {/* Fallback - redirect unknown routes to home */}
+        {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>

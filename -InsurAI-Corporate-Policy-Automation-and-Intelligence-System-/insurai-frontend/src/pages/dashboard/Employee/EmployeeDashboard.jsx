@@ -195,7 +195,7 @@ export default function EmployeeDashboard() {
   // ------------------ KEEPING ORIGINAL EMPLOYEE FETCH ------------------
   const fetchLoggedInEmployee = async (token) => {
     try {
-      const response = await axios.get("https://insurai-backend-production.up.railway.app/auth/employees", {
+      const response = await axios.get("http://localhost:8080/auth/employees", {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -223,7 +223,7 @@ export default function EmployeeDashboard() {
   const fetchEmployeeData = async (token) => {
     setLoading(prev => ({ ...prev, policies: true }));
     try {
-      const response = await axios.get("https://insurai-backend-production.up.railway.app/employee/policies", {
+      const response = await axios.get("http://localhost:8080/employee/policies", {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -258,7 +258,7 @@ export default function EmployeeDashboard() {
   const fetchEmployeeClaims = async (token) => {
     setLoading(prev => ({ ...prev, claims: true }));
     try {
-      const response = await axios.get("https://insurai-backend-production.up.railway.app/employee/claims", {
+      const response = await axios.get("http://localhost:8080/employee/claims", {
         headers: { Authorization: `Bearer ${token}` }
       });
       setClaims(response.data);
@@ -272,7 +272,7 @@ export default function EmployeeDashboard() {
   // ------------------ KEEPING ORIGINAL AGENTS FETCH ------------------
   const fetchAgents = async (token) => {
     try {
-      const response = await axios.get("https://insurai-backend-production.up.railway.app/agent/availability/all", {
+      const response = await axios.get("http://localhost:8080/agent/availability/all", {
         headers: { Authorization: `Bearer ${token}` }
       });
       setAgentsAvailability(response.data);
@@ -285,7 +285,7 @@ export default function EmployeeDashboard() {
   const fetchEmployeeQueries = async (token) => {
     setLoading(prev => ({ ...prev, queries: true }));
     try {
-      const response = await axios.get("https://insurai-backend-production.up.railway.app/employee/queries", {
+      const response = await axios.get("http://localhost:8080/employee/queries", {
         headers: { Authorization: `Bearer ${token}` }
       });
       setQueries(response.data);
@@ -420,7 +420,7 @@ export default function EmployeeDashboard() {
 
     try {
       const response = await axios.post(
-        `https://insurai-backend-production.up.railway.app/employee/queries?agentId=${selectedAgentId}&queryText=${encodeURIComponent(newQuery.queryText)}&policyName=${encodeURIComponent(policyName)}&claimType=${encodeURIComponent(newQuery.claimType)}`,
+        `http://localhost:8080/employee/queries?agentId=${selectedAgentId}&queryText=${encodeURIComponent(newQuery.queryText)}&policyName=${encodeURIComponent(policyName)}&claimType=${encodeURIComponent(newQuery.claimType)}`,
         null,
         {
           headers: {
@@ -553,9 +553,9 @@ export default function EmployeeDashboard() {
                   <i className="bi bi-person-badge me-1"></i>
                   Welcome back, {employeeName}
                 </span>
-                <span className="badge bg-primary">
-                  <i className="bi bi-shield-check me-1"></i>
-                  Enterprise Portal
+                <span className=" ">
+                  <i className=" "></i>
+                  
                 </span>
               </div>
             </div>
@@ -939,7 +939,7 @@ return (
               </div>
               <div>
                 <h2 className="mb-0 fw-bold">InsurAI Employee Portal</h2>
-                <small className="text-light opacity-75">Employee Insurance Suite v2.0</small>
+                <small className="text-light opacity-75">Employee Insurance Suite </small>
               </div>
             </div>
             <div className="col-md-6 d-flex justify-content-end align-items-center">
@@ -1073,14 +1073,14 @@ return (
 
         /* Header Gradient */
         .employee-dashboard .dashboard-header {
-          background: linear-gradient(135deg, #a43335 0%, rgb(50, 81, 97) 100%);
+          background: linear-gradient(135deg, #bb2459 0%, rgb(62, 132, 151) 100%);
         }
 
         /* Sidebar */
         .dashboard-sidebar {
           width: 250px;
           min-height: 100vh;
-          background: #e6e9ed;
+          background: #e4e6de;
           transition: all 0.3s ease;
         }
 
@@ -1090,7 +1090,7 @@ return (
           padding: 12px 15px;
           display: flex;
           align-items: center;
-          color: #313437;
+          color: #6116b2;
           transition: all 0.3s ease;
         }
 
@@ -1102,30 +1102,30 @@ return (
         }
 
         .sidebar-link.active {
-          background: linear-gradient(135deg, #1b262c  0%, rgb(54, 125, 163) 100%);
+          background: linear-gradient(135deg, #b92c2c  0%, rgb(54, 125, 163) 100%);
           color: white;
           font-weight: 600;
-          box-shadow: 0 4px 15px rgba(0,123,255,0.3);
+          box-shadow: 0 4px 15px rgba(25, 5, 245, 0.3);
         }
 
         .sidebar-footer {
-          color: #495057;
+          color: #0d5fb1;
         }
 
         /* Enhanced Cards with Theme Colors */
         .dashboard-card {
-          transition: all 0.2s ease;
+          transition: all 0.4s ease;
           border: none;
         }
 
         .dashboard-card:hover {
           transform: translateY(-15px);
-          box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+          box-shadow: 0 10px 25px rgba(238, 22, 22, 0.15);
         }
 
         /* Progress Bars with Theme Colors */
         .progress {
-          background-color: #e9ecef;
+          background-color: #df1919;
           border-radius: 10px;
         }
 
@@ -1134,24 +1134,24 @@ return (
         }
 
         .bg-primary {
-          background: linear-gradient(135deg, #1b262c 0%, #206c95ff 100%) !important;
+          background: linear-gradient(135deg, #b3bdc2 0%, rgb(4, 250, 82) 100%) !important;
         }
 
         /* Buttons with Theme Colors */
         .btn-primary {
-          background: linear-gradient(135deg, #1b262c 0%, #206c95ff 100%);
+          background: linear-gradient(135deg, #0b98e3 0%, #206c95ff 100%);
           border: none;
         }
 
         .btn-primary:hover {
-          background: linear-gradient(135deg, #152026 0%, #1a5a7a 100%);
+          background: linear-gradient(135deg, #198cc9 0%, #1a5a7a 100%);
           transform: translateY(-2px);
-          box-shadow: 0 4px 15px rgba(32, 108, 149, 0.4);
+          box-shadow: 0 4px 15px rgba(12, 152, 227, 0.4);
         }
 
         .btn-outline-primary {
-          color: #206c95ff;
-          border-color: #206c95ff;
+          color: rgb(238, 42, 7);
+          border-color: rgb(59, 9, 238);
         }
 
         .btn-outline-primary:hover {
@@ -1182,7 +1182,7 @@ return (
         }
 
         .table-theme thead {
-          background: linear-gradient(135deg, #1b262c 0%, #206c95ff 100%);
+          background: linear-gradient(135deg, #3f5866 0%, #206c95ff 100%);
           color: white;
         }
 
@@ -1257,7 +1257,7 @@ return (
   gap: 24px;
   padding: 20px 24px;
   border-radius: 24px;
-  background: linear-gradient(135deg, #1b262c, #863636);
+  background: linear-gradient(135deg, #335e96, #b85878);
   color: white;
 
   /* horizontal behavior */

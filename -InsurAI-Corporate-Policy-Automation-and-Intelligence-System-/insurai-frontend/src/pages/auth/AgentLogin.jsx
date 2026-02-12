@@ -157,10 +157,10 @@ export default function AgentLogin() {
         </form>
 
         <p style={styles.footer}>
-          New field agent?{" "}
-          <Link to="/agent/register" style={styles.link}>
-            Register here
-          </Link>
+          {/* New field agent?{" "} */}
+          {/* <Link to="/agent/register" style={styles.link}>
+            
+          </Link> */}
         </p>
 
         <small style={styles.secure}>
